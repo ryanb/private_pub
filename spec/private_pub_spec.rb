@@ -44,4 +44,8 @@ describe PrivatePub do
     Net::HTTP.should_receive(:post_form).with(URI.parse(PrivatePub.server), "hello world").and_return(:result)
     PrivatePub.publish("hello world").should == :result
   end
+
+  it "has a FayeExtension instance" do
+    PrivatePub.faye_extension.should be_kind_of(PrivatePub::FayeExtension)
+  end
 end

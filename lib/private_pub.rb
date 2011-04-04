@@ -1,7 +1,11 @@
 require "digest/sha1"
 require "net/http"
 
+require "private_pub/faye_extension"
+
 class PrivatePub
+  class Error < StandardError; end
+
   class << self
     def server=(server)
       @config[:server] = server
@@ -43,6 +47,11 @@ class PrivatePub
     def publish(data)
       Net::HTTP.post_form(URI.parse(PrivatePub.server), data)
     end
+
+    def faye_extension
+      FayeExtension.new
+    end
   end
+
   reset_config
 end
