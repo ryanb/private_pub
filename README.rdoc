@@ -1,72 +1,71 @@
-= Broadcast Center
+= Private Pub
 
-This is a Ruby gem for use in a Rails application to broadcast and receive messages through a separate messaging server such as Faye.
+THIS PROJECT IS CURRENTLY VAPORWARE. I am writing the {readme first}[http://tom.preston-werner.com/2010/08/23/readme-driven-development.html].
 
-This project is still in very early development so what is described here does not yet work. I am writing the readme first.
+This is a Ruby gem for use in a Rails application to publish and subscribe to messages through a separate server such as {Faye}[http://faye.jcoglan.com/].
 
 
 == Setup
 
 Add the gem to your Gemfile.
 
-  gem "broadcast_center"
+  gem "private_pub"
 
 Run the generator to create the JavaScript file and initializer.
 
-  rails g broadcast_center:install
+  rails g private_pub:install
 
 Add the JavaScript file to your layout file.
 
-  <%= javascript_include_tag "broadcast_center" %>
+  <%= javascript_include_tag "private_pub" %>
 
 Next setup Faye and configure the generated initializer file to point to the faye server if it's not already. DON'T add the faye.js file to your layout because this will be done automatically.
 
-  BroadcastCenter.server = "http://localhost:9292/faye"
+  PrivatePub.server = "http://localhost:9292/faye"
 
-Finally add the BroadcastCenter extension to Faye through the rackup file. You'll need to load the initializer file there too so it sets the secret token (or set it some other way).
+Finally add the PrivatePub extension to Faye through the rackup file. You'll need to load the initializer file there too so it sets the secret token (or set it some other way).
 
-  require "broadcast_center"
-  require File.expand_path("../config/initializers/broadcast_center.rb", __FILE__)
-  faye_server.add_extension(BroadcastCenter.faye_extension)
+  require "private_pub"
+  require File.expand_path("../config/initializers/private_pub.rb", __FILE__)
+  faye_server.add_extension(PrivatePub.faye_extension)
 
 
 == Usage
 
-This adds two helper methods to Rails: +listen+ and +broadcast+. Let's say you're building a chat application. On the page displaying a chat you can listen to anything incoming on the "/messages/new" channel.
+This adds two helper methods to Rails: +subscribe_to+ and +publish_to+. Let's say you're building a chat application. On the page displaying a chat you can subscribe to anything incoming on the "/messages/new" channel.
 
-  <%= listen "/messages/new" %>
+  <%= subscribe_to "/messages/new" %>
 
-And then broadcast to that channel when a new message is added in the Rails app.
+And then publish to that channel when a new message is added in the Rails app.
 
-  <% broadcast "/messages/new" do %>
+  <% publish_to "/messages/new" do %>
     $("#chat").append("<%= escape_javascript render(@messages) %>");
   <% end %>
 
-That bit of JavaScript will be broadcast and executed to all listening clients.
+That bit of JavaScript will be published and executed to all subscribing clients.
 
-Alternatively you can pass anything you want to the broadcast method (to_json will be called on it).
+Alternatively you can pass anything you want to the +publish_to+ method (+to_json+ will be called on it).
 
-  broadcast "/messages/new", @message
+  publish_to "/messages/new", @message
 
 And then handle that in a callback in JavaScript.
 
-  var broadcast_center = new BroadcastCenter;
-  broadcast_center.listen("/messages/new", function(data) {
+  var private_pub = new PrivatePub;
+  private_pub.subscribe("/messages/new", function(data) {
     // data contains whatever json was passed in
   });
 
 
-
 == Security
 
-Security is handled automatically for you. Only the Rails app is able to broadcast messages. Users are only able to listen to messages on the channels they subscribe to. This means every channel is private.
+Security is handled automatically for you. Only the Rails app is able to publish. Users are only able to subscribe to messages on the channels they subscribe to. This means every channel is private.
 
-Here's how it works. The +listen+ helper will output an element containing data information about the channel.
+Here's how it works. The +subscribe+ helper will output an element containing data information about the channel.
 
-  <span class="broadcast_center_listen" data-channel="/messages/new" data-key="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" timestamp="13019431281234"></span>
+  <span class="private_pub_subscription" data-channel="/messages/new" data-key="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" timestamp="13019431281234"></span>
 
 The key is a combination of the message name, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the key is correct. The key is automatically expired after 1 hour but this can be configured.
 
-  BroadcastCenter.key_expiration = 10.minutes
+  PrivatePub.key_expiration = 10.minutes
 
 Or +nil+ for no expiration. Note: if Faye is on a separate server from the Rails app it's important that the time is in sync.
