@@ -64,10 +64,10 @@ Security is handled automatically for you. Only the Rails app is able to publish
 
 Here's how it works. The +subscribe_to+ helper will output an element containing data information about the channel.
 
-  <span class="private_pub_subscription" data-channel="/messages/new" data-key="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" data-timestamp="13019431281234"></span>
+  <span class="private_pub_subscription" data-channel="/messages/new" data-signature="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" data-timestamp="13019431281234"></span>
 
-The data-key is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the key is correct. The key is automatically expired after 1 hour but this can be configured.
+The data-signature is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the signature is correct. The signature is automatically expired after 1 hour but this can be configured.
 
-  PrivatePub.key_expiration = 10.minutes
+  PrivatePub.signature_expiration = 10.minutes
 
 Or +nil+ for no expiration. Note: if Faye is on a separate server from the Rails app it's important that the time is in sync.

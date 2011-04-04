@@ -13,8 +13,8 @@ class PrivatePub
 
     def authenticate_subscribe(message)
       subscription = PrivatePub.subscription(:channel => message["subscription"], :timestamp => message["ext"]["private_pub_timestamp"])
-      if message["ext"]["private_pub_key"] != subscription[:key]
-        message["error"] = "Incorrect key."
+      if message["ext"]["private_pub_signature"] != subscription[:signature]
+        message["error"] = "Incorrect signature."
       end
     end
 

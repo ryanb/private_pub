@@ -5,21 +5,21 @@ describe PrivatePub do
     PrivatePub.reset_config
   end
 
-  it "has secret token, server, and key expiration settings" do
+  it "has secret token, server, and signature expiration settings" do
     PrivatePub.secret_token = "secret token"
     PrivatePub.secret_token.should == "secret token"
     PrivatePub.server = "http://localhost/"
     PrivatePub.server.should == "http://localhost/"
-    PrivatePub.key_expiration = 1000
-    PrivatePub.key_expiration.should == 1000
+    PrivatePub.signature_expiration = 1000
+    PrivatePub.signature_expiration.should == 1000
   end
 
   it "defaults server to localhost:9292/faye" do
     PrivatePub.server.should == "http://localhost:9292/faye"
   end
 
-  it "defaults key_expiration to 1 hour" do
-    PrivatePub.key_expiration.should == 60 * 60
+  it "defaults signature_expiration to 1 hour" do
+    PrivatePub.signature_expiration.should == 60 * 60
   end
 
   it "defaults subscription timestamp to current time in milliseconds" do
@@ -37,7 +37,7 @@ describe PrivatePub do
   it "does a sha1 digest of channel, timestamp, and secret token" do
     PrivatePub.secret_token = "token"
     subscription = PrivatePub.subscription(:timestamp => 123, :channel => "channel")
-    subscription[:key].should == Digest::SHA1.hexdigest("tokenchannel123")
+    subscription[:signature].should == Digest::SHA1.hexdigest("tokenchannel123")
   end
 
   it "publishes to server using Net::HTTP" do

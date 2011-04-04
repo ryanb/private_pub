@@ -7,18 +7,18 @@ describe PrivatePub::FayeExtension do
     @message = {"channel" => "/meta/subscribe", "ext" => {}}
   end
 
-  it "adds an error on an incoming subscription with a bad key" do
+  it "adds an error on an incoming subscription with a bad signature" do
     @message["subscription"] = "hello"
-    @message["ext"]["private_pub_key"] = "bad"
+    @message["ext"]["private_pub_signature"] = "bad"
     @message["ext"]["private_pub_timestamp"] = "123"
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should == "Incorrect key."
+    message["error"].should == "Incorrect signature."
   end
 
-  it "has no error when the key matches the subscription" do
+  it "has no error when the signature matches the subscription" do
     sub = PrivatePub.subscription(:timestamp => 123, :channel => "hello")
     @message["subscription"] = sub[:channel]
-    @message["ext"]["private_pub_key"] = sub[:key]
+    @message["ext"]["private_pub_signature"] = sub[:signature]
     @message["ext"]["private_pub_timestamp"] = sub[:timestamp]
     message = @faye.incoming(@message, lambda { |m| m })
     message["error"].should be_nil

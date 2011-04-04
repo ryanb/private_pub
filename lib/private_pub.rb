@@ -15,12 +15,12 @@ class PrivatePub
       @config[:server]
     end
 
-    def key_expiration=(key_expiration)
-      @config[:key_expiration] = key_expiration
+    def signature_expiration=(signature_expiration)
+      @config[:signature_expiration] = signature_expiration
     end
 
-    def key_expiration
-      @config[:key_expiration]
+    def signature_expiration
+      @config[:signature_expiration]
     end
 
     def secret_token=(secret_token)
@@ -34,13 +34,13 @@ class PrivatePub
     def reset_config
       @config = {
         :server => "http://localhost:9292/faye",
-        :key_expiration => 60 * 60, # one hour
+        :signature_expiration => 60 * 60, # one hour
       }
     end
 
     def subscription(options = {})
       sub = {:timestamp => (Time.now.to_f * 1000).round}.merge(options)
-      sub[:key] = Digest::SHA1.hexdigest([secret_token, sub[:channel], sub[:timestamp]].join)
+      sub[:signature] = Digest::SHA1.hexdigest([secret_token, sub[:channel], sub[:timestamp]].join)
       sub
     end
 
