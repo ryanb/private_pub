@@ -19,11 +19,11 @@ Add the JavaScript file to your layout file.
 
   <%= javascript_include_tag "private_pub" %>
 
-Next setup Faye and configure the generated initializer file to point to the faye server if it's not already. DON'T add the faye.js file to your layout because this will be done automatically.
+Next, setup Faye and configure the generated initializer file to point to the faye server. DON'T add the faye.js file to your layout because this will be done by private_pub.js when subscribing to a channel.
 
   PrivatePub.server = "http://localhost:9292/faye"
 
-Finally add the PrivatePub extension to Faye through the rackup file. You'll need to load the initializer file there too so it sets the secret token (or set it some other way).
+Finally add the PrivatePub extension through the Faye rackup file. You'll need to load the initializer file there too so it sets the secret token (or you can set it some other way).
 
   require "private_pub"
   require File.expand_path("../config/initializers/private_pub.rb", __FILE__)
@@ -32,7 +32,7 @@ Finally add the PrivatePub extension to Faye through the rackup file. You'll nee
 
 == Usage
 
-This adds two helper methods to Rails: +subscribe_to+ and +publish_to+. Let's say you're building a chat application. On the page displaying a chat you can subscribe to anything incoming on the "/messages/new" channel.
+This adds two helper methods to Rails: +subscribe_to+ and +publish_to+. Let's say you're building a chat application. On the page displaying a chat you can subscribe to anything incoming on a channel.
 
   <%= subscribe_to "/messages/new" %>
 
@@ -44,27 +44,29 @@ And then publish to that channel when a new message is added in the Rails app.
 
 That bit of JavaScript will be published and executed to all subscribing clients.
 
-Alternatively you can pass anything you want to the +publish_to+ method (+to_json+ will be called on it).
+Alternatively you can pass anything you want to the +publish_to+ method (it will be converted +to_json+).
 
-  publish_to "/messages/new", @message
+  publish_to "/messages/new", :chat_message => "hello world"
 
 And then handle that in a callback in JavaScript.
 
   var private_pub = new PrivatePub;
   private_pub.subscribe("/messages/new", function(data) {
-    // data contains whatever json was passed in
+    $("#chat").append(data["chat_message"]);
   });
+
+Note: the subscribe_to call is still necessary with this approach to grant the user access to that channel. The JavaScript is just a callback.
 
 
 == Security
 
-Security is handled automatically for you. Only the Rails app is able to publish. Users are only able to subscribe to messages on the channels they subscribe to. This means every channel is private.
+Security is handled automatically for you. Only the Rails app is able to publish. Users are only able to receive messages on the channels you subscribe them to. This means every channel is private.
 
-Here's how it works. The +subscribe+ helper will output an element containing data information about the channel.
+Here's how it works. The +subscribe_to+ helper will output an element containing data information about the channel.
 
-  <span class="private_pub_subscription" data-channel="/messages/new" data-key="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" timestamp="13019431281234"></span>
+  <span class="private_pub_subscription" data-channel="/messages/new" data-key="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" data-timestamp="13019431281234"></span>
 
-The key is a combination of the message name, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the key is correct. The key is automatically expired after 1 hour but this can be configured.
+The data-key is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the key is correct. The key is automatically expired after 1 hour but this can be configured.
 
   PrivatePub.key_expiration = 10.minutes
 
