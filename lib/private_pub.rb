@@ -51,6 +51,10 @@ class PrivatePub
     def faye_extension
       FayeExtension.new
     end
+
+    def signature_expired?(timestamp)
+      timestamp < ((Time.now.to_f - PrivatePub.signature_expiration)*1000).round if PrivatePub.signature_expiration
+    end
   end
 
   reset_config

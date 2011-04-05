@@ -16,12 +16,21 @@ describe PrivatePub::FayeExtension do
   end
 
   it "has no error when the signature matches the subscription" do
-    sub = PrivatePub.subscription(:timestamp => 123, :channel => "hello")
+    sub = PrivatePub.subscription(:channel => "hello")
     @message["subscription"] = sub[:channel]
     @message["ext"]["private_pub_signature"] = sub[:signature]
     @message["ext"]["private_pub_timestamp"] = sub[:timestamp]
     message = @faye.incoming(@message, lambda { |m| m })
     message["error"].should be_nil
+  end
+
+  it "has an error when signature is just expired" do
+    sub = PrivatePub.subscription(:timestamp => 123, :channel => "hello")
+    @message["subscription"] = sub[:channel]
+    @message["ext"]["private_pub_signature"] = sub[:signature]
+    @message["ext"]["private_pub_timestamp"] = sub[:timestamp]
+    message = @faye.incoming(@message, lambda { |m| m })
+    message["error"].should == "Signature has expired."
   end
 
   it "has an error when trying to publish to a custom channel with a bad token" do

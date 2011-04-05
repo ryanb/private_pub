@@ -15,6 +15,8 @@ class PrivatePub
       subscription = PrivatePub.subscription(:channel => message["subscription"], :timestamp => message["ext"]["private_pub_timestamp"])
       if message["ext"]["private_pub_signature"] != subscription[:signature]
         message["error"] = "Incorrect signature."
+      elsif PrivatePub.signature_expired? message["ext"]["private_pub_timestamp"].to_i
+        message["error"] = "Signature has expired."
       end
     end
 

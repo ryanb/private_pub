@@ -48,4 +48,21 @@ describe PrivatePub do
   it "has a FayeExtension instance" do
     PrivatePub.faye_extension.should be_kind_of(PrivatePub::FayeExtension)
   end
+
+  it "says signature has expired when time passed in is greater than expiration" do
+    PrivatePub.signature_expiration = 30*60
+    time = PrivatePub.subscription[:timestamp] - 31*60*1000
+    PrivatePub.signature_expired?(time).should be_true
+  end
+
+  it "says signature has not expired when time passed in is less than expiration" do
+    PrivatePub.signature_expiration = 30*60
+    time = PrivatePub.subscription[:timestamp] - 29*60*1000
+    PrivatePub.signature_expired?(time).should be_false
+  end
+
+  it "says signature has not expired when expiration is nil" do
+    PrivatePub.signature_expiration = nil
+    PrivatePub.signature_expired?(0).should be_false
+  end
 end
