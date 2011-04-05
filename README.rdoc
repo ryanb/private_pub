@@ -1,61 +1,43 @@
 = Private Pub
 
-THIS PROJECT IS CURRENTLY VAPORWARE. I am writing the {readme first}[http://tom.preston-werner.com/2010/08/23/readme-driven-development.html].
-
-This is a Ruby gem for use in a Rails application to publish and subscribe to messages through a separate server such as {Faye}[http://faye.jcoglan.com/].
+This is a Ruby gem for use with Rails to publish and subscribe to messages through a separate server such as {Faye}[http://faye.jcoglan.com/]. All channels are automatically made private.
 
 
 == Setup
 
-Add the gem to your Gemfile.
+Add the gem to your Gemfile and run +bundle+.
 
   gem "private_pub"
 
-Run the generator to create the JavaScript file and initializer.
+Run the generator to create the initial files.
 
   rails g private_pub:install
 
-Add the JavaScript file to your layout file.
+Add the generated JavaScript to your layout file. Currently this uses jQuery, so you will need to customize it if you aren't using jQuery.
 
   <%= javascript_include_tag "private_pub" %>
 
-Next, setup Faye and configure the generated initializer file to point to the faye server. DON'T add the faye.js file to your layout because this will be done by private_pub.js when subscribing to a channel.
+Next, install and start up Faye using the rackup file that was generated.
 
-  PrivatePub.server = "http://localhost:9292/faye"
+  gem install faye
+  rackup faye.ru -s thin -E production
 
-Finally add the PrivatePub extension through the Faye rackup file. You'll need to load the initializer file there too so it sets the secret token (or you can set it some other way).
-
-  require "private_pub"
-  require File.expand_path("../config/initializers/private_pub.rb", __FILE__)
-  faye_server.add_extension(PrivatePub.faye_extension)
+It's not necessary to add the faye.js since that will be handled automatically.
 
 
 == Usage
 
-This adds two helper methods to Rails: +subscribe_to+ and +publish_to+. Let's say you're building a chat application. On the page displaying a chat you can subscribe to anything incoming on a channel.
+Use the +subscribe_to+ helper method on any page to subscribe to a channel.
 
   <%= subscribe_to "/messages/new" %>
 
-And then publish to that channel when a new message is added in the Rails app.
+Use the +publish_to+ helper method to publish messages to that channel. If a block of JavaScript is passed it will be evaluated automatically. This is usually done through a JavaScript AJAX response.
 
   <% publish_to "/messages/new" do %>
     $("#chat").append("<%= escape_javascript render(@messages) %>");
   <% end %>
 
-That bit of JavaScript will be published and executed to all subscribing clients.
-
-Alternatively you can pass anything you want to the +publish_to+ method (it will be converted +to_json+).
-
-  publish_to "/messages/new", :chat_message => "hello world"
-
-And then handle that in a callback in JavaScript.
-
-  var private_pub = new PrivatePub;
-  private_pub.subscribe("/messages/new", function(data) {
-    $("#chat").append(data["chat_message"]);
-  });
-
-Note: the subscribe_to call is still necessary with this approach to grant the user access to that channel. The JavaScript is just a callback.
+There will be alternative ways to publish/subscribe to messages in the future.
 
 
 == Security
