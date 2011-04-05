@@ -1,6 +1,8 @@
 = Private Pub
 
-This is a Ruby gem for use with Rails to publish and subscribe to messages through a separate server such as {Faye}[http://faye.jcoglan.com/]. All channels are automatically made private.
+This is a Ruby gem for use with Rails to publish and subscribe to messages through {Faye}[http://faye.jcoglan.com/]. All channels are automatically made private.
+
+This project was motivated by {Railscasts episode #236}[http://railscasts.com/episodes/260-messaging-with-faye].
 
 
 == Setup
@@ -22,7 +24,7 @@ Next, install and start up Faye using the rackup file that was generated.
   gem install faye
   rackup faye.ru -s thin -E production
 
-It's not necessary to add the faye.js since that will be handled automatically.
+It's not necessary to include faye.js since that will be handled automatically.
 
 
 == Usage
@@ -31,13 +33,13 @@ Use the +subscribe_to+ helper method on any page to subscribe to a channel.
 
   <%= subscribe_to "/messages/new" %>
 
-Use the +publish_to+ helper method to publish messages to that channel. If a block of JavaScript is passed it will be evaluated automatically. This is usually done through a JavaScript AJAX response.
+Use the +publish_to+ helper method to publish messages to that channel. If a block of JavaScript is passed it will be evaluated automatically. This is usually done in a JavaScript AJAX response (such as a <tt>create.js.erb</tt> file).
 
   <% publish_to "/messages/new" do %>
     $("#chat").append("<%= escape_javascript render(@messages) %>");
   <% end %>
 
-There will be alternative ways to publish/subscribe to messages in the future.
+There will be alternative ways to publish/subscribe to channels in the future.
 
 
 == Security
@@ -52,4 +54,9 @@ The data-signature is a combination of the channel, timestamp, and secret token 
 
   PrivatePub.signature_expiration = 10.minutes
 
-Or +nil+ for no expiration. Note: if Faye is on a separate server from the Rails app it's important that the time is in sync.
+Or pass +nil+ for no expiration. Note: if Faye is on a separate server from the Rails app it's important that the system clocks are in sync.
+
+
+== Development & Feedback
+
+Questions or comments? Please use the {issue tracker}[https://github.com/ryanb/private_pub]. If you would like to contribue to this project, clone this repository and run +bundle+ and +rake+ to run the tests.
