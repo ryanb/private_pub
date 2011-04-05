@@ -54,9 +54,9 @@ The data-signature is a combination of the channel, timestamp, and secret token 
 
   PrivatePub.signature_expiration = 10.minutes
 
-Or pass +nil+ for no expiration. Note: if Faye is on a separate server from the Rails app it's important that the system clocks are in sync.
+Or pass +nil+ for no expiration. Note: if Faye is on a separate server from the Rails app it's important that the system clocks be in sync.
 
 
 == Development & Feedback
 
-Questions or comments? Please use the {issue tracker}[https://github.com/ryanb/private_pub]. If you would like to contribue to this project, clone this repository and run +bundle+ and +rake+ to run the tests.
+Questions or comments? Please use the {issue tracker}[https://github.com/ryanb/private_pub/issues]. If you would like to contribue to this project, clone this repository and run +bundle+ and +rake+ to run the tests.
