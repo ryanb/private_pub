@@ -2,7 +2,7 @@
 
 This is a Ruby gem for use with Rails to publish and subscribe to messages through {Faye}[http://faye.jcoglan.com/]. All channels are automatically made private.
 
-This project was motivated by {Railscasts episode #236}[http://railscasts.com/episodes/260-messaging-with-faye].
+This project was motivated by {Railscasts episode #260}[http://railscasts.com/episodes/260-messaging-with-faye].
 
 
 == Setup
