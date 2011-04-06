@@ -1,0 +1,7 @@
+development:
+  server: http://localhost:9292/faye
+  secret_token: my_super_secret_token
+
+production:
+  server: http://localhost:9292/faye
+  secret_token: "<%= ActiveSupport::SecureRandom.hex(32) %>"

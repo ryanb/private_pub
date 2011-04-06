@@ -1,2 +1,3 @@
-PrivatePub.server = "http://localhost:9292/faye"
-PrivatePub.secret_token = "<%= ActiveSupport::SecureRandom.hex(32) %>"
+private_pub_config = YAML.load_file("#{RAILS.root.to_s}/config/private_pub.yml")[Rails.env]
+PrivatePub.server = private_pub_config["server"]
+PrivatePub.secret_token = private_pub_config["secret_token"]
