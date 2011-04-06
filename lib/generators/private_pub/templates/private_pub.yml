@@ -2,6 +2,13 @@ development:
   server: http://localhost:9292/faye
   secret_token: my_super_secret_token
 
+# For your production environment, please use a real secret token
+# You can generate one using the ActiveSupport SecureRandom module
+# Just run the following command in your rails console and paste the result
+# ActiveSupport::SecureRandom.hex(32)
+# => "8b7a1345f329d64ba22688a5b849e19e21275f1f5b00274fa50eb6a496838ec6" 
 production:
-  server: http://localhost:9292/faye
-  secret_token: "<%= ActiveSupport::SecureRandom.hex(32) %>"
+  server: http://example.com/faye
+  secret_token: CHANGE_THIS_WITH_A_REAL_TOKEN 
+  
+  
