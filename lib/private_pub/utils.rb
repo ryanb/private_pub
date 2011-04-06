@@ -1,7 +1,7 @@
 class PrivatePub
   module Utils
     class << self
-      def symbolize_keys arg
+      def symbolize_keys(arg)
         case arg
         when Array
           arg.map { |elem| symbolize_keys elem }
