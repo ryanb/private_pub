@@ -1,2 +1,3 @@
 server: http://example.com/faye
 secret_token: SECRET_TOKEN
+signature_expiration: 600

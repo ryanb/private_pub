@@ -36,18 +36,26 @@ describe PrivatePub do
     PrivatePub.load_config("spec/fixtures/private_pub_simple.yml")
     PrivatePub.server.should == "http://example.com/faye"
     PrivatePub.secret_token.should == "SECRET_TOKEN"
+    PrivatePub.signature_expiration.should == 600
   end
 
   it "loads a configuration file with environments via load_config" do
     PrivatePub.load_config("spec/fixtures/private_pub_complex.yml", :production)
     PrivatePub.server.should == "http://example.com/faye"
     PrivatePub.secret_token.should == "PRODUCTION_SECRET_TOKEN"
+    PrivatePub.signature_expiration.should == 600
   end
 
   it "loads a configuration file via load_config with a string environment" do
     PrivatePub.load_config("spec/fixtures/private_pub_complex.yml", 'production')
     PrivatePub.server.should == "http://example.com/faye"
     PrivatePub.secret_token.should == "PRODUCTION_SECRET_TOKEN"
+    PrivatePub.signature_expiration.should == 600
+  end
+
+  it "supports a nil signature_expiration via a blank value in the configuration file" do
+    PrivatePub.load_config("spec/fixtures/private_pub_nil_expiration.yml")
+    PrivatePub.signature_expiration.should be_nil
   end
 
   it "raises an exception if an invalid environment is passed to load_config" do

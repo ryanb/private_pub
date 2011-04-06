@@ -50,11 +50,15 @@ Here's how it works. The +subscribe_to+ helper will output an element containing
 
   <span class="private_pub_subscription" data-channel="/messages/new" data-signature="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" data-timestamp="13019431281234"></span>
 
-The data-signature is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the signature is correct. The signature is automatically expired after 1 hour but this can be configured.
+The data-signature is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the signature is correct. The signature is automatically expired after 1 hour but this can be configured in the generated YAML file.
 
-  PrivatePub.signature_expiration = 10.minutes
+  signature_expiration: 600 # 10 minutes, expressed in seconds
 
-Or pass +nil+ for no expiration. Note: if Faye is on a separate server from the Rails app it's important that the system clocks be in sync.
+Or use a blank value for no expiration.
+
+  signature_expiration:
+
+Note: if Faye is on a separate server from the Rails app it's important that the system clocks be in sync.
 
 
 == Development & Feedback
