@@ -34,7 +34,7 @@ class PrivatePub
     def reset_config
       @config = {
         :server => "http://localhost:9292/faye",
-        :signature_expiration => 60 * 60, # one hour
+        :signature_expiration => 60 * 60 # one hour
       }
     end
 
