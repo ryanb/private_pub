@@ -6,7 +6,7 @@ class PrivatePub
       end
 
       def copy_files
-        template "private_pub_initializer.rb", "config/initializers/private_pub.rb"
+        template "private_pub.yml", "config/private_pub.yml"
         copy_file "private_pub_helper.rb", "app/helpers/private_pub_helper.rb"
         copy_file "private_pub.js", "public/javascripts/private_pub.js"
         copy_file "faye.ru", "faye.ru"
