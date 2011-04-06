@@ -1,0 +1,6 @@
+development:
+  server: http://dev.local:9292/faye
+  secret_token: DEVELOPMENT_SECRET_TOKEN
+production:
+  server: http://example.com/faye
+  secret_token: PRODUCTION_SECRET_TOKEN

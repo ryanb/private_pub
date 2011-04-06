@@ -2,6 +2,7 @@ require "digest/sha1"
 require "net/http"
 
 require "private_pub/faye_extension"
+require "private_pub/utils"
 
 class PrivatePub
   class Error < StandardError; end
@@ -36,6 +37,23 @@ class PrivatePub
         :server => "http://localhost:9292/faye",
         :signature_expiration => 60 * 60, # one hour
       }
+    end
+
+    def load_config(filename, environment = nil)
+      config = PrivatePub::Utils.symbolize_keys YAML.load_file(filename)
+      parse_config(config, environment)
+    end
+
+    def parse_config(data, environment)
+      if environment.nil?
+        @config.merge!(data)
+      else
+        environment = environment.to_sym
+        if data[environment].nil?
+          raise ArgumentError.new("invalid environment: #{environment.to_s}")
+        end
+        @config.merge!(data[environment])
+      end
     end
 
     def subscription(options = {})

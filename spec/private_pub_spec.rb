@@ -28,6 +28,34 @@ describe PrivatePub do
     PrivatePub.subscription[:timestamp].should == (time.to_f * 1000).round
   end
 
+  it "has a load_config method" do
+    PrivatePub.should respond_to :load_config
+  end
+
+  it "loads a simple configuration file via load_config" do
+    PrivatePub.load_config("spec/fixtures/private_pub_simple.yml")
+    PrivatePub.server.should == "http://example.com/faye"
+    PrivatePub.secret_token.should == "SECRET_TOKEN"
+  end
+
+  it "loads a configuration file with environments via load_config" do
+    PrivatePub.load_config("spec/fixtures/private_pub_complex.yml", :production)
+    PrivatePub.server.should == "http://example.com/faye"
+    PrivatePub.secret_token.should == "PRODUCTION_SECRET_TOKEN"
+  end
+
+  it "loads a configuration file via load_config with a string environment" do
+    PrivatePub.load_config("spec/fixtures/private_pub_complex.yml", 'production')
+    PrivatePub.server.should == "http://example.com/faye"
+    PrivatePub.secret_token.should == "PRODUCTION_SECRET_TOKEN"
+  end
+
+  it "raises an exception if an invalid environment is passed to load_config" do
+    lambda {
+      PrivatePub.load_config("spec/fixtures/private_pub_complex.yml", :test)
+    }.should raise_error ArgumentError
+  end
+
   it "includes channel and custom time in subscription" do
     subscription = PrivatePub.subscription(:timestamp => 123, :channel => "hello")
     subscription[:timestamp].should == 123
