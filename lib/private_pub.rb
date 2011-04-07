@@ -8,29 +8,7 @@ class PrivatePub
   class Error < StandardError; end
 
   class << self
-    def server=(server)
-      @config[:server] = server
-    end
-
-    def server
-      @config[:server]
-    end
-
-    def signature_expiration=(signature_expiration)
-      @config[:signature_expiration] = signature_expiration
-    end
-
-    def signature_expiration
-      @config[:signature_expiration]
-    end
-
-    def secret_token=(secret_token)
-      @config[:secret_token] = secret_token
-    end
-
-    def secret_token
-      @config[:secret_token]
-    end
+    attr_reader :config
 
     def reset_config
       @config = {
@@ -39,31 +17,24 @@ class PrivatePub
       }
     end
 
-    def load_config(filename, environment = nil)
+    def load_config(filename, environment)
       config = PrivatePub::Utils.symbolize_keys YAML.load_file(filename)
-      parse_config(config, environment)
+      parse_config(config, environment.to_sym)
     end
 
     def parse_config(data, environment)
-      if environment.nil?
-        @config.merge!(data)
-      else
-        environment = environment.to_sym
-        if data[environment].nil?
-          raise ArgumentError.new("invalid environment: #{environment.to_s}")
-        end
-        @config.merge!(data[environment])
-      end
+      raise ArgumentError.new("invalid environment: #{environment.to_s}") if data[environment].nil?
+      @config.merge!(data[environment])
     end
 
     def subscription(options = {})
       sub = {:timestamp => (Time.now.to_f * 1000).round}.merge(options)
-      sub[:signature] = Digest::SHA1.hexdigest([secret_token, sub[:channel], sub[:timestamp]].join)
+      sub[:signature] = Digest::SHA1.hexdigest([config[:secret_token], sub[:channel], sub[:timestamp]].join)
       sub
     end
 
     def publish(data)
-      Net::HTTP.post_form(URI.parse(PrivatePub.server), data)
+      Net::HTTP.post_form(URI.parse(config[:server]), data)
     end
 
     def faye_extension
@@ -71,7 +42,7 @@ class PrivatePub
     end
 
     def signature_expired?(timestamp)
-      timestamp < ((Time.now.to_f - PrivatePub.signature_expiration)*1000).round if PrivatePub.signature_expiration
+      timestamp < ((Time.now.to_f - config[:signature_expiration])*1000).round if config[:signature_expiration]
     end
   end
 

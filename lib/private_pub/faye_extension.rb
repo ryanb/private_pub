@@ -21,9 +21,9 @@ class PrivatePub
     end
 
     def authenticate_publish(message)
-      if PrivatePub.secret_token.nil?
-        raise Error, "No token set in PrivatePub.secret_token, set this to match the token used in the web app."
-      elsif message["ext"]["private_pub_token"] != PrivatePub.secret_token
+      if PrivatePub.config[:secret_token].nil?
+        raise Error, "No secret_token config set, ensure private_pub.yml is loaded properly."
+      elsif message["ext"]["private_pub_token"] != PrivatePub.config[:secret_token]
         message["error"] = "Incorrect token."
       end
     end

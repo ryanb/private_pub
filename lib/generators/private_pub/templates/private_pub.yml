@@ -1,9 +1,9 @@
 development:
   server: "http://localhost:9292/faye"
-  secret_token: "secret_token"
+  secret_token: "secret"
 test:
   server: "http://localhost:9292/faye"
-  secret_token: "secret_token"
+  secret_token: "secret"
 production:
   server: "http://example.com/faye"
   secret_token: "<%= ActiveSupport::SecureRandom.hex(32) %>"

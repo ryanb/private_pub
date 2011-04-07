@@ -34,7 +34,7 @@ describe PrivatePub::FayeExtension do
   end
 
   it "has an error when trying to publish to a custom channel with a bad token" do
-    PrivatePub.secret_token = "good"
+    PrivatePub.config[:secret_token] = "good"
     @message["channel"] = "/custom/channel"
     @message["ext"]["private_pub_token"] = "bad"
     message = @faye.incoming(@message, lambda { |m| m })
@@ -46,7 +46,7 @@ describe PrivatePub::FayeExtension do
     @message["ext"]["private_pub_token"] = "bad"
     lambda {
       message = @faye.incoming(@message, lambda { |m| m })
-    }.should raise_error("No token set in PrivatePub.secret_token, set this to match the token used in the web app.")
+    }.should raise_error("No secret_token config set, ensure private_pub.yml is loaded properly.")
   end
 
   it "has no error on other meta calls" do
