@@ -1,4 +1,4 @@
-class PrivatePub
+module PrivatePub
   module Generators
     class InstallGenerator < Rails::Generators::Base
       def self.source_root

@@ -1,4 +1,4 @@
-class PrivatePub
+module PrivatePub
   module Utils
     class << self
       def symbolize_keys(arg)

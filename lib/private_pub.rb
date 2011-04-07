@@ -4,7 +4,7 @@ require "net/http"
 require "private_pub/faye_extension"
 require "private_pub/utils"
 
-class PrivatePub
+module PrivatePub
   class Error < StandardError; end
 
   class << self

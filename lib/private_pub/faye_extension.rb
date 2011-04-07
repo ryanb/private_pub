@@ -1,4 +1,4 @@
-class PrivatePub
+module PrivatePub
   class FayeExtension
     def incoming(message, callback)
       if message["channel"] == "/meta/subscribe"
