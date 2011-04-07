@@ -2,7 +2,6 @@ require "digest/sha1"
 require "net/http"
 
 require "private_pub/faye_extension"
-require "private_pub/utils"
 
 module PrivatePub
   class Error < StandardError; end
@@ -18,13 +17,9 @@ module PrivatePub
     end
 
     def load_config(filename, environment)
-      config = PrivatePub::Utils.symbolize_keys YAML.load_file(filename)
-      parse_config(config, environment.to_sym)
-    end
-
-    def parse_config(data, environment)
-      raise ArgumentError.new("invalid environment: #{environment.to_s}") if data[environment].nil?
-      @config.merge!(data[environment])
+      data = YAML.load_file(filename)[environment.to_s]
+      raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if data.nil?
+      data.each { |k, v| config[k.to_sym] = v }
     end
 
     def subscription(options = {})
