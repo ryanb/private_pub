@@ -1,13 +1,12 @@
+# Run with: rackup faye.ru -s thin -E production
+require "yaml"
+require "faye"
 begin
-  require "faye"
   require "private_pub"
 rescue LoadError
   require "bundler/setup"
-  require "faye"
   require "private_pub"
 end
 
-PrivatePub.load_config("config/private_pub.yml", ENV["RAILS_ENV"] || "development")
-faye_server = Faye::RackAdapter.new(:mount => '/faye', :timeout => 45)
-faye_server.add_extension(PrivatePub.faye_extension)
-run faye_server
+PrivatePub.load_config(File.expand_path("../config/private_pub.yml", __FILE__), ENV["RAILS_ENV"] || "development")
+run Faye::RackAdapter.new(:mount => "/faye", :timeout => 45, :extensions => [PrivatePub.faye_extension])

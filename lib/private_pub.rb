@@ -2,6 +2,7 @@ require "digest/sha1"
 require "net/http"
 
 require "private_pub/faye_extension"
+require "private_pub/railtie" if defined? Rails
 
 module PrivatePub
   class Error < StandardError; end
@@ -17,9 +18,9 @@ module PrivatePub
     end
 
     def load_config(filename, environment)
-      data = YAML.load_file(filename)[environment.to_s]
-      raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if data.nil?
-      data.each { |k, v| config[k.to_sym] = v }
+      yaml = YAML.load_file(filename)[environment.to_s]
+      raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if yaml.nil?
+      yaml.each { |k, v| config[k.to_sym] = v }
     end
 
     def subscription(options = {})
