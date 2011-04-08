@@ -6,17 +6,13 @@ module PrivatePub
       PrivatePub.publish(:message => message.to_json)
     end
 
-    def subscribe_to(channel, options = {})
+    def subscribe_to(channel)
       subscription = PrivatePub.subscription(:channel => channel)
-      span_options = {
-        :class => "private_pub_subscription",
+      content_tag :span, "", :class => "private_pub_subscription",
         "data-server" => PrivatePub.config[:server],
         "data-channel" => subscription[:channel],
         "data-signature" => subscription[:signature],
         "data-timestamp" => subscription[:timestamp]
-      }
-      span_options["data-callback"] = options[:callback] if options[:callback]
-      content_tag :span, "", span_options
     end
   end
 end
