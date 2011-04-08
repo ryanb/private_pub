@@ -1,7 +1,7 @@
 module PrivatePub
   module ViewHelpers
     def publish_to(channel, object = nil, &block)
-      message = {:channel => channel, :data => {}, :ext => {:private_pub_token => PrivatePub.config[:secret_token]}}
+      message = {:channel => channel, :data => {:channel => channel}, :ext => {:private_pub_token => PrivatePub.config[:secret_token]}}
       message[:data][:_data] = block_given? ? capture(&block) : object.to_json
       PrivatePub.publish(:message => message.to_json)
     end
