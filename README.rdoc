@@ -39,7 +39,20 @@ Use the +publish_to+ helper method to publish messages to that channel. If a blo
     $("#chat").append("<%= escape_javascript render(@messages) %>");
   <% end %>
 
-There will be alternative ways to publish/subscribe to channels in the future.
+If you prefer to pass JSON to a custom callback method, you may subscribe to the channel via JavaScript through the global PrivatePub object and specify your callback.
+
+  <script type="text/javascript">
+    PrivatePub.subscribe("/messages/add", function(data, channel) {
+      line = $("<p>").html("<b>" + data.from + "</b>: " + data.message);
+      $('body').append(line);
+    });
+  </script>
+
+The Ruby +subscribe_to+ call is still necessary with this approach to grant the user access to the channel; the JavaScript is only there to specify a callback and associate it with a channel.
+
+To publish data as JSON, pass the object you wish to publish to +publish_to+ instead of passing a block. It will have +to_json+ called on it, and the data will be made available to your callback via the first parameter, and the channel the data was published to will be available as the second parameter.
+
+  <% publish_to "/messages/new", :message => "Hello, world!", :from => "Ryan Bates" %>
 
 
 == Security
