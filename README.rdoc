@@ -54,8 +54,6 @@ To publish data as JSON, pass the object you wish to publish to +publish_to+ ins
 
   <% publish_to "/messages/new", :message => "Hello, world!", :from => "Ryan Bates" %>
 
-The JSON representation of the object you publish will be available to your JavaScript callback via the first parameter.
-
 
 == Security
 
