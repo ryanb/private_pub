@@ -39,7 +39,21 @@ Use the +publish_to+ helper method to publish messages to that channel. If a blo
     $("#chat").append("<%= escape_javascript render(@messages) %>");
   <% end %>
 
-There will be alternative ways to publish/subscribe to channels in the future.
+If you prefer to pass JSON to a custom callback method, you may do so using the +:callback+ option to +subscribe_to+.
+
+  <%= subscribe_to "/messages/new", :callback => "process_message" %>
+
+Then, pass the object you wish to render to JSON to +publish_to+ instead of passing a block.
+
+  <% publish_to "/messages/new", :message => "Hello, world!", :from => "Ryan Bates" %>
+
+The JSON representation of the object you publish will be available to your JavaScript callback via the first parameter.
+
+  <script type="text/javascript">
+    function process_message(data) {
+      alert("New message from " + data.from + ": " + data.message);
+    }
+  </script>
 
 
 == Security
