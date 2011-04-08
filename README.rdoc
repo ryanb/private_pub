@@ -51,7 +51,8 @@ The JSON representation of the object you publish will be available to your Java
 
   <script type="text/javascript">
     function process_message(data) {
-      alert("New message from " + data.from + ": " + data.message);
+      line = $("<p>").html("<b>" + data.from + "</b>: " + data.message);
+      $("#chat").append(line);
     }
   </script>
 
