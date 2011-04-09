@@ -1,6 +1,6 @@
 = Private Pub
 
-This is a Ruby gem for use with Rails to publish and subscribe to messages through {Faye}[http://faye.jcoglan.com/]. All channels are automatically made private.
+This is a Ruby gem for use with Rails to publish and subscribe to messages through {Faye}[http://faye.jcoglan.com/]. All channels are private so you don't have to worry about users subscribing to channels which you haven't subscribed them to.
 
 This project was motivated by {Railscasts episode #260}[http://railscasts.com/episodes/260-messaging-with-faye].
 
@@ -15,7 +15,7 @@ Run the generator to create the initial files.
 
   rails g private_pub:install
 
-Add the generated JavaScript to your layout file. Currently this uses jQuery, so you will need to customize it if you aren't using jQuery.
+Add the generated JavaScript to your layout file. This can be used with any JavaScript framework.
 
   <%= javascript_include_tag "private_pub" %>
 
@@ -24,7 +24,7 @@ Next, install and start up Faye using the rackup file that was generated.
   gem install faye
   rackup faye.ru -s thin -E production
 
-It's not necessary to include faye.js since that will be handled automatically.
+It's not necessary to include faye.js since that will be handled automatically for you.
 
 
 == Usage
@@ -39,31 +39,35 @@ Use the +publish_to+ helper method to publish messages to that channel. If a blo
     $("#chat").append("<%= escape_javascript render(@messages) %>");
   <% end %>
 
-If you prefer to pass JSON to a custom callback method, you may subscribe to the channel via JavaScript through the global PrivatePub object and specify your callback.
+If you prefer to work through JSON you can pass an argument to +publish_to+ instead of a block and it will be converted +to_json+ behind the scenes.
 
-  <script type="text/javascript">
-    PrivatePub.subscribe("/messages/add", function(data, channel) {
-      line = $("<p>").html("<b>" + data.from + "</b>: " + data.message);
-      $('body').append(line);
-    });
-  </script>
+  publish_to "/messages/new", :chat_message => "Hello, world!"
 
-The Ruby +subscribe_to+ call is still necessary with this approach to grant the user access to the channel; the JavaScript is only there to specify a callback and associate it with a channel.
+And then handle this through JavaScript on the client side.
 
-To publish data as JSON, pass the object you wish to publish to +publish_to+ instead of passing a block. It will have +to_json+ called on it, and the data will be made available to your callback via the first parameter, and the channel the data was published to will be available as the second parameter.
+  PrivatePub.subscribe("/messages/new", function(data, channel) {
+    $("#chat").append(data.chat_message);
+  });
 
-  <% publish_to "/messages/new", :message => "Hello, world!", :from => "Ryan Bates" %>
+The Ruby +subscribe_to+ call is still necessary with this approach to grant the user access to the channel. The JavaScript is just a callback for any custom behavior.
 
 
 == Security
 
 Security is handled automatically for you. Only the Rails app is able to publish. Users are only able to receive messages on the channels you subscribe them to. This means every channel is private.
 
-Here's how it works. The +subscribe_to+ helper will output an element containing data information about the channel.
+Here's how it works. The +subscribe_to+ helper will output a script element containing data information about the channel.
 
-  <span class="private_pub_subscription" data-channel="/messages/new" data-signature="2aae6c35c94fcfb415dbe95f408b9ce91ee846ed" data-timestamp="13019431281234"></span>
+  <script type="text/javascript">
+    PrivatePub.sign({
+      channel: "/messages/new",
+      timestamp: 1302306682972,
+      signature: "dc1c71d3e959ebb6f49aa6af0c86304a0740088d",
+      server: "http://localhost:9292/faye"
+    });
+  </script>
 
-The data-signature is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the signature is correct. The signature is automatically expired after 1 hour but this can be configured in the generated YAML file.
+The signature is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the signature is correct. The signature is automatically expired after 1 hour but this can be configured in the generated YAML file.
 
   signature_expiration: 600 # 10 minutes, expressed in seconds
 
