@@ -13,6 +13,7 @@ module PrivatePub
       message[:data][:eval] = capture(&block) if block_given?
       message[:data][:data] = object if object
       PrivatePub.publish(:message => message.to_json)
+    rescue PrivatePub::ConnectionRefused => e # fail silently
     end
 
     def subscribe_to(channel)
@@ -27,7 +28,7 @@ module PrivatePub
       end
     end
   end
-  
+
   class InvalidChannelSyntax < Exception
   end
 end
