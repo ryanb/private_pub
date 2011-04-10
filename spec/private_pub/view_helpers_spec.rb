@@ -21,7 +21,7 @@ describe PrivatePub::ViewHelpers do
     
     it "raises an error unless channel begins with a slash" do
       PrivatePub.should_receive(:publish).once
-      lambda { publish_to('invalid') }.should raise_error(PrivatePub::InvalidChannelSyntax, "must begin with a slash")
+      lambda { publish_to('invalid') }.should raise_error(PrivatePub::InvalidChannelSyntax, /must begin with a slash/)
       lambda { publish_to('/valid') }.should_not raise_error(PrivatePub::InvalidChannelSyntax)
     end
     

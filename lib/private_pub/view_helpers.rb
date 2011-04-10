@@ -3,7 +3,7 @@ module PrivatePub
     def parse_channel(channel)
       raise(PrivatePub::InvalidChannelSyntax, "cannot be nil") if channel.nil?
       channel = '/'+dom_id(channel) unless channel.is_a?(String)
-      raise(PrivatePub::InvalidChannelSyntax, "must begin with a slash") unless channel[0] == '/'
+      raise(PrivatePub::InvalidChannelSyntax, "'#{channel}' must begin with a slash") unless channel[0].chr == '/'
       channel
     end
 
