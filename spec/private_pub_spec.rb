@@ -53,10 +53,6 @@ describe PrivatePub do
     Net::HTTP.should_receive(:post_form).with(URI.parse(PrivatePub.config[:server]), "hello world").and_return(:result)
     PrivatePub.publish("hello world").should == :result
   end
-  
-  it "raises a custom exception when connection refused" do
-    lambda { PrivatePub.publish({}) }.should raise_error(PrivatePub::ConnectionRefused)
-  end
 
   it "has a FayeExtension instance" do
     PrivatePub.faye_extension.should be_kind_of(PrivatePub::FayeExtension)

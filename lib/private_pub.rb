@@ -31,8 +31,6 @@ module PrivatePub
 
     def publish(data)
       Net::HTTP.post_form(URI.parse(config[:server]), data)
-    rescue Errno::ECONNREFUSED => e
-      raise PrivatePub::ConnectionRefused, e
     end
 
     def faye_extension
@@ -45,7 +43,4 @@ module PrivatePub
   end
 
   reset_config
-
-  class ConnectionRefused < Exception
-  end
 end
