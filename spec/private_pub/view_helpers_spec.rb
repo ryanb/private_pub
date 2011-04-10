@@ -1,37 +1,3 @@
-=begin
-  it "raises a custom exception when connection refused" do
-    lambda { PrivatePub.publish({}) }.should raise_error(PrivatePub::ConnectionRefused)
-  end
-  +    rescue Errno::ECONNREFUSED => e
-  +      raise PrivatePub::ConnectionRefused, e
-       end
-
-       def faye_extension
-  @@ -43,4 +45,7 @@ module PrivatePub
-     end
-
-     reset_config
-  +
-  +  class ConnectionRefused < Exception
-  +  end
-   end
-  diff --git a/spec/private_pub_spec.rb b/spec/private_pub_spec.rb
-  index c352d3b..41ac608 100644
-  --- a/spec/private_pub_spec.rb
-  +++ b/spec/private_pub_spec.rb
-  @@ -53,6 +53,10 @@ describe PrivatePub do
-       Net::HTTP.should_receive(:post_form).with(URI.parse(PrivatePub.config[:server]), "hello world").and_return(:result)
-       PrivatePub.publish("hello world").should == :result
-     end
-  +  
-  +  it "raises a custom exception when connection refused" do
-  +    lambda { PrivatePub.publish({}) }.should raise_error(PrivatePub::ConnectionRefused)
-  +  end
-
-     it "has a FayeExtension instance" do
-  
-=end
-
 require 'spec_helper'
 require 'support/view_helpers_helper.rb'
 
