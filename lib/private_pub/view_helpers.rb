@@ -20,7 +20,10 @@ module PrivatePub
       subscription = PrivatePub.subscription(:channel => channel)
       subscription[:server] = PrivatePub.config[:server]
       content_tag "script", :type => "text/javascript" do
-        raw("PrivatePub.sign(#{subscription.to_json});")
+        raw(<<-JS)
+        try { PrivatePub.sign(#{subscription.to_json}); }
+        catch(e) { console.log("[PrivatePub] Load error"); console.log(e) }
+        JS
       end
     end
   end
