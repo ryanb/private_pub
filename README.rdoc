@@ -1,6 +1,6 @@
 = Private Pub
 
-This is a Ruby gem for use with Rails to publish and subscribe to messages through {Faye}[http://faye.jcoglan.com/]. All channels are private so you don't have to worry about users subscribing to channels which you haven't subscribed them to.
+Private Pub is a Ruby gem for use with Rails to publish and subscribe to messages through {Faye}[http://faye.jcoglan.com/]. It allows you to easily provide real-time updates through an open socket without tying up a Rails process. All channels are private so users can only listen to events you subscribe them to.
 
 This project was motivated by {Railscasts episode #260}[http://railscasts.com/episodes/260-messaging-with-faye].
 
@@ -54,7 +54,7 @@ The Ruby +subscribe_to+ call is still necessary with this approach to grant the 
 
 == Security
 
-Security is handled automatically for you. Only the Rails app is able to publish. Users are only able to receive messages on the channels you subscribe them to. This means every channel is private.
+Security is handled automatically for you. Only the Rails app is able to publish messages. Users are only able to receive messages on the channels you subscribe them to so every channel is private.
 
 Here's how it works. The +subscribe_to+ helper will output a script element containing data information about the channel.
 
@@ -75,7 +75,7 @@ Or use a blank value for no expiration.
 
   signature_expiration:
 
-Note: if Faye is on a separate server from the Rails app it's important that the system clocks be in sync.
+Note: if Faye is on a separate server from the Rails app it's important that the system clocks be in sync so the expiration works properly.
 
 
 == Development & Feedback
