@@ -2,12 +2,12 @@
 
 Private Pub is a Ruby gem for use with Rails to publish and subscribe to messages through {Faye}[http://faye.jcoglan.com/]. It allows you to easily provide real-time updates through an open socket without tying up a Rails process. All channels are private so users can only listen to events you subscribe them to.
 
-This project was motivated by {Railscasts episode #260}[http://railscasts.com/episodes/260-messaging-with-faye].
+This project was motivated by {RailsCasts episode #260}[http://railscasts.com/episodes/260-messaging-with-faye].
 
 
 == Setup
 
-Add the gem to your Gemfile and run +bundle+.
+Add the gem to your Gemfile and run the +bundle+ command to install it.
 
   gem "private_pub"
 
@@ -33,13 +33,18 @@ Use the +subscribe_to+ helper method on any page to subscribe to a channel.
 
   <%= subscribe_to "/messages/new" %>
 
-Use the +publish_to+ helper method to publish messages to that channel. If a block of JavaScript is passed it will be evaluated automatically. This is usually done in a JavaScript AJAX response (such as a <tt>create.js.erb</tt> file).
+Use the +publish_to+ helper method to send JavaScript to that channel. This is usually done in a JavaScript AJAX template (such as a <tt>create.js.erb</tt> file).
 
   <% publish_to "/messages/new" do %>
     $("#chat").append("<%= escape_javascript render(@messages) %>");
   <% end %>
 
-If you prefer to work through JSON you can pass an argument to +publish_to+ instead of a block and it will be converted +to_json+ behind the scenes.
+This JavaScript will be immediately evaluated on all clients who have subscribed to that channel. In this example they will see the new chat message appear in real-time without reloading the browser.
+
+
+== Alternative Usage
+
+If you prefer to work through JSON instead of JavaScript templates to handle AJAX responses, you can pass an argument to +publish_to+ instead of a block and it will be converted +to_json+ behind the scenes. This can be done through the controller.
 
   publish_to "/messages/new", :chat_message => "Hello, world!"
 
