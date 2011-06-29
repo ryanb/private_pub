@@ -25,6 +25,8 @@ module PrivatePub
         raise Error, "No secret_token config set, ensure private_pub.yml is loaded properly."
       elsif message["ext"]["private_pub_token"] != PrivatePub.config[:secret_token]
         message["error"] = "Incorrect token."
+      else
+        message["ext"]["private_pub_token"] = nil
       end
     end
   end
