@@ -47,6 +47,8 @@ Next, install and start up Faye using the rackup file that was generated.
   gem install faye
   rackup faye.ru -s thin -E production
 
+It’s not necessary to include faye.js since that will be handled automatically for you.
+
 
 == Usage
 
