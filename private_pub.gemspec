@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.summary     = "Private pub/sub messaging in Rails."
   s.description = "Private pub/sub messaging in Rails through Faye."
 
-  s.files        = Dir["{lib,spec}/**/*", "[A-Z]*", "init.rb"] - ["Gemfile.lock"]
+  s.files        = Dir["{app,lib,spec}/**/*", "[A-Z]*", "init.rb"] - ["Gemfile.lock"]
   s.require_path = "lib"
 
   s.add_development_dependency 'rspec', '~> 2.1.0'

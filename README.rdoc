@@ -5,7 +5,7 @@ Private Pub is a Ruby gem for use with Rails to publish and subscribe to message
 This project was motivated by {RailsCasts episode #260}[http://railscasts.com/episodes/260-messaging-with-faye].
 
 
-== Setup
+== Rails 3.0
 
 Add the gem to your Gemfile and run the +bundle+ command to install it.
 
@@ -25,6 +25,27 @@ Next, install and start up Faye using the rackup file that was generated.
   rackup faye.ru -s thin -E production
 
 It's not necessary to include faye.js since that will be handled automatically for you.
+
+
+== Rails 3.1
+
+Add the gem to your Gemfile and run the +bundle+ command to install it.
+
+  gem "private_pub"
+
+Run the generator to create the initial files.
+
+  rails g private_pub:install
+
+The necessary JavaScript will be added to the asset pipeline.
+To include it put this in your application.js.
+
+  //= require private_pub
+
+Next, install and start up Faye using the rackup file that was generated.
+
+  gem install faye
+  rackup faye.ru -s thin -E production
 
 
 == Usage
