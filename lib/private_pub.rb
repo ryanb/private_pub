@@ -33,6 +33,14 @@ module PrivatePub
       Net::HTTP.post_form(URI.parse(config[:server]), data)
     end
 
+    def publish_to(channel, object = nil, &block)
+      message = {:channel => channel, :data => {:channel => channel}, :ext => {:private_pub_token => PrivatePub.config[:secret_token]}}
+      message[:data][:eval] = capture(&block) if block_given?
+      message[:data][:data] = object if object
+      PrivatePub.publish(:message => message.to_json)
+    end
+
+
     def faye_extension
       FayeExtension.new
     end
