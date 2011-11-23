@@ -15,9 +15,15 @@ Run the generator to create the initial files.
 
   rails g private_pub:install
 
-Add the generated JavaScript to your layout file. This can be used with any JavaScript framework.
+Add the JavaScript to your project. For Rails 3.1 or newer, add the require line to your +app/assets/javascripts/application.js+ file.
+
+  //= require private_pub
+
+For older versions of Rails, include the generated JavaScript file in your layout.
 
   <%= javascript_include_tag "private_pub" %>
+
+This library can be used with any JavaScript framework.
 
 Next, install and start up Faye using the rackup file that was generated.
 
