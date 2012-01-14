@@ -33,7 +33,9 @@ rackup faye.ru -s thin -E production
 
 **In Rails 3.0** add the generated private_pub.js file to your layout.
 
-  <%= javascript_include_tag "private_pub" %>
+```rhtml
+<%= javascript_include_tag "private_pub" %>
+```
 
 It's not necessary to include faye.js since that will be handled automatically for you.
 
@@ -108,6 +110,6 @@ signature_expiration:
 Note: if Faye is on a separate server from the Rails app it's important that the system clocks be in sync so the expiration works properly.
 
 
-== Development & Feedback
+## Development & Feedback
 
 Questions or comments? Please use the [issue tracker](https://github.com/ryanb/private_pub/issues). If you would like to contribue to this project, clone this repository and run `bundle` and `rake` to run the tests.
