@@ -22,7 +22,7 @@ rails g private_pub:install
 Next, start up Faye using the rackup file that was generated.
 
 ```
-rackup faye.ru -s thin -E production
+rackup private_pub.ru -s thin -E production
 ```
 
 **In Rails 3.1** add the JavaScript file to your application.js file manifest.

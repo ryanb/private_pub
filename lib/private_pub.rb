@@ -34,12 +34,13 @@ module PrivatePub
       Net::HTTP.post_form(URI.parse(config[:server]), data)
     end
 
-    def faye_extension
-      FayeExtension.new
-    end
-
     def signature_expired?(timestamp)
       timestamp < ((Time.now.to_f - config[:signature_expiration])*1000).round if config[:signature_expiration]
+    end
+
+    def faye_app(options = {})
+      options = {:mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}.merge(options)
+      Faye::RackAdapter.new(options)
     end
   end
 

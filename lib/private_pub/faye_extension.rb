@@ -9,7 +9,7 @@ module PrivatePub
       callback.call(message)
     end
 
-    private
+  private
 
     def authenticate_subscribe(message)
       subscription = PrivatePub.subscription(:channel => message["subscription"], :timestamp => message["ext"]["private_pub_timestamp"])

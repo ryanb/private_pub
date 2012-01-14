@@ -54,8 +54,8 @@ describe PrivatePub do
     PrivatePub.publish("hello world").should == :result
   end
 
-  it "has a FayeExtension instance" do
-    PrivatePub.faye_extension.should be_kind_of(PrivatePub::FayeExtension)
+  it "has a Faye rack app instance" do
+    PrivatePub.faye_app.should be_kind_of(Faye::RackAdapter)
   end
 
   it "says signature has expired when time passed in is greater than expiration" do
