@@ -49,9 +49,40 @@ describe PrivatePub do
     subscription[:signature].should == Digest::SHA1.hexdigest("tokenchannel123")
   end
 
-  it "publishes to server using Net::HTTP" do
-    Net::HTTP.should_receive(:post_form).with(URI.parse(PrivatePub.config[:server]), "hello world").and_return(:result)
-    PrivatePub.publish("hello world").should == :result
+  it "formats a message hash given a channel and a string for eval" do
+    PrivatePub.config[:secret_token] = "token"
+    PrivatePub.message("chan", "foo").should eq(
+      :ext => {:private_pub_token => "token"},
+      :channel => "chan",
+      :data => {
+        :channel => "chan",
+        :eval => "foo"
+      }
+    )
+  end
+
+  it "formats a message hash given a channel and a hash" do
+    PrivatePub.config[:secret_token] = "token"
+    PrivatePub.message("chan", :foo => "bar").should eq(
+      :ext => {:private_pub_token => "token"},
+      :channel => "chan",
+      :data => {
+        :channel => "chan",
+        :data => {:foo => "bar"}
+      }
+    )
+  end
+
+  it "publish message as json to server using Net::HTTP" do
+    message = stub(:to_json => "message_json")
+    Net::HTTP.should_receive(:post_form).with(URI.parse(PrivatePub.config[:server]), :message => "message_json").and_return(:result)
+    PrivatePub.publish_message(message).should == :result
+  end
+
+  it "publish_to passes message to publish_message call" do
+    PrivatePub.should_receive(:message).with("chan", "foo").and_return("message")
+    PrivatePub.should_receive(:publish_message).with("message").and_return(:result)
+    PrivatePub.publish_to("chan", "foo").should == :result
   end
 
   it "has a Faye rack app instance" do

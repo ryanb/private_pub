@@ -52,7 +52,7 @@ Use the `publish_to` helper method to send JavaScript to that channel. This is u
 
 ```rhtml
 <% publish_to "/messages/new" do %>
-  $("#chat").append("<%= escape_javascript render(@messages) %>");
+  $("#chat").append("<%= j render(@messages) %>");
 <% end %>
 ```
 
@@ -61,10 +61,10 @@ This JavaScript will be immediately evaluated on all clients who have subscribed
 
 ## Alternative Usage
 
-If you prefer to work through JSON instead of JavaScript templates to handle AJAX responses, you can pass an argument to `publish_to` instead of a block and it will be converted `to_json` behind the scenes. This can be done through the controller.
+If you prefer to work through JSON instead of JavaScript templates to handle AJAX responses, you can pass an argument to `publish_to` instead of a block and it will be converted `to_json` behind the scenes. This can also be done anywhere (such as the controller).
 
 ```ruby
-publish_to "/messages/new", :chat_message => "Hello, world!"
+PrivatePub.publish_to "/messages/new", :chat_message => "Hello, world!"
 ```
 
 And then handle this through JavaScript on the client side.

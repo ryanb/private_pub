@@ -29,8 +29,22 @@ module PrivatePub
       sub
     end
 
-    def publish(data)
-      Net::HTTP.post_form(URI.parse(config[:server]), data)
+    def publish_to(channel, data)
+      publish_message(message(channel, data))
+    end
+
+    def message(channel, data)
+      message = {:channel => channel, :data => {:channel => channel}, :ext => {:private_pub_token => config[:secret_token]}}
+      if data.kind_of? String
+        message[:data][:eval] = data
+      else
+        message[:data][:data] = data
+      end
+      message
+    end
+
+    def publish_message(message)
+      Net::HTTP.post_form(URI.parse(config[:server]), :message => message.to_json)
     end
 
     def signature_expired?(timestamp)
