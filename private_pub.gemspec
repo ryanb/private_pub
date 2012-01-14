@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "private_pub"
-  s.version     = "0.2.0"
+  s.version     = "0.3.0.alpha"
   s.author      = "Ryan Bates"
   s.email       = "ryan@railscasts.com"
   s.homepage    = "http://github.com/ryanb/private_pub"
@@ -9,6 +9,8 @@ Gem::Specification.new do |s|
 
   s.files        = Dir["{app,lib,spec}/**/*", "[A-Z]*", "init.rb"] - ["Gemfile.lock"]
   s.require_path = "lib"
+
+  s.add_dependency 'faye'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 2.8.0'
