@@ -24,7 +24,7 @@ module PrivatePub
     end
 
     def subscription(options = {})
-      sub = {:timestamp => (Time.now.to_f * 1000).round}.merge(options)
+      sub = {:server => config[:server], :timestamp => (Time.now.to_f * 1000).round}.merge(options)
       sub[:signature] = Digest::SHA1.hexdigest([config[:secret_token], sub[:channel], sub[:timestamp]].join)
       sub
     end

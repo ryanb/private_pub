@@ -37,10 +37,12 @@ describe PrivatePub do
     }.should raise_error ArgumentError
   end
 
-  it "includes channel and custom time in subscription" do
+  it "includes channel, server, and custom time in subscription" do
+    PrivatePub.config[:server] = "server"
     subscription = PrivatePub.subscription(:timestamp => 123, :channel => "hello")
     subscription[:timestamp].should == 123
     subscription[:channel].should == "hello"
+    subscription[:server].should == "server"
   end
 
   it "does a sha1 digest of channel, timestamp, and secret token" do
