@@ -1,3 +1,10 @@
+## 1.0.0 (January 15, 2012)
+
+* setting config defaults to nil so everything must be set in `private_pub.yml`
+
+* Documentation improvements
+
+
 ## 0.3.0 (January 14, 2012)
 
 * adding `PrivatePub.publish_to` method for publishing from anywhere - issue #15
