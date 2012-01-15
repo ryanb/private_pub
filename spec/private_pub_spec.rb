@@ -26,11 +26,6 @@ describe PrivatePub do
     PrivatePub.config[:signature_expiration].should == 600
   end
 
-  it "supports a nil signature_expiration via a blank value in the configuration file" do
-    PrivatePub.load_config("spec/fixtures/private_pub.yml", :no_signature_expiration)
-    PrivatePub.config[:signature_expiration].should be_nil
-  end
-
   it "raises an exception if an invalid environment is passed to load_config" do
     lambda {
       PrivatePub.load_config("spec/fixtures/private_pub.yml", :test)

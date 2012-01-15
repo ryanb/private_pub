@@ -82,7 +82,7 @@ The Ruby `subscribe_to` helper call is still necessary with this approach to gra
 
 The configuration is set separately for each environment in the generated `config/private_pub.yml` file. Here are the options.
 
-* `server`: The URL to use for the Faye server.
+* `server`: The URL to use for the Faye server such as `http://localhost:9292/faye`.
 * `secret_token`: A secret hash to secure the server. Can be any string.
 * `signature_expiration`: The length of time in seconds before a subscription signature expires. If this is not set there is no expiration. Note: if Faye is on a separate server from the Rails app, the system clocks must be in sync for the expiration to work properly.
 
@@ -102,7 +102,7 @@ The `subscribe_to` helper will output the following script which subscribes the 
 </script>
 ```
 
-The signature and timestamp checked on the Faye server to ensure users are only able to access channels you subscribe them too. The signature will automatically expire after the time specified in the configuration.
+The signature and timestamp checked on the Faye server to ensure users are only able to access channels you subscribe them to. The signature will automatically expire after the time specified in the configuration.
 
 The `publish_to` method will send a post request to the Faye server (using `Net::HTTP`) instructing it to send the given data back to the browser.
 
