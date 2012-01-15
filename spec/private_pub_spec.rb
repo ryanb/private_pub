@@ -77,6 +77,12 @@ describe PrivatePub do
     PrivatePub.publish_message(message).should == :result
   end
 
+  it "raises an exception if no server is specified when calling publish_message" do
+    lambda {
+      PrivatePub.publish_message("foo")
+    }.should raise_error(PrivatePub::Error)
+  end
+
   it "publish_to passes message to publish_message call" do
     PrivatePub.should_receive(:message).with("chan", "foo").and_return("message")
     PrivatePub.should_receive(:publish_message).with("message").and_return(:result)
