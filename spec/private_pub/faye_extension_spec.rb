@@ -55,13 +55,13 @@ describe PrivatePub::FayeExtension do
     message = @faye.incoming(@message, lambda { |m| m })
     message["error"].should be_nil
   end
-  
+
   it "should not let message carry the private pub token after server's validation" do
     PrivatePub.config[:secret_token] = "good"
     @message["channel"] = "/custom/channel"
     @message["ext"]["private_pub_token"] = PrivatePub.config[:secret_token]
     message = @faye.incoming(@message, lambda { |m| m })
-    message['ext']["private_pub_token"].should be_nil    
+    message['ext']["private_pub_token"].should be_nil
   end
-    
+
 end
