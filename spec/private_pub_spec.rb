@@ -5,12 +5,12 @@ describe PrivatePub do
     PrivatePub.reset_config
   end
 
-  it "defaults server to localhost:9292/faye" do
-    PrivatePub.config[:server].should == "http://localhost:9292/faye"
+  it "defaults server to nil" do
+    PrivatePub.config[:server].should be_nil
   end
 
-  it "defaults signature_expiration to 1 hour" do
-    PrivatePub.config[:signature_expiration].should == 60 * 60
+  it "defaults signature_expiration to nil" do
+    PrivatePub.config[:signature_expiration].should be_nil
   end
 
   it "defaults subscription timestamp to current time in milliseconds" do
@@ -76,8 +76,9 @@ describe PrivatePub do
   end
 
   it "publish message as json to server using Net::HTTP" do
+    PrivatePub.config[:server] = "http://localhost"
     message = stub(:to_json => "message_json")
-    Net::HTTP.should_receive(:post_form).with(URI.parse(PrivatePub.config[:server]), :message => "message_json").and_return(:result)
+    Net::HTTP.should_receive(:post_form).with(URI.parse("http://localhost"), :message => "message_json").and_return(:result)
     PrivatePub.publish_message(message).should == :result
   end
 

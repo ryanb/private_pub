@@ -11,10 +11,7 @@ module PrivatePub
     attr_reader :config
 
     def reset_config
-      @config = {
-        :server => "http://localhost:9292/faye",
-        :signature_expiration => 60 * 60, # one hour
-      }
+      @config = {}
     end
 
     def load_config(filename, environment)

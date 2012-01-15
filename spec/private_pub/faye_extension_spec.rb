@@ -24,7 +24,8 @@ describe PrivatePub::FayeExtension do
     message["error"].should be_nil
   end
 
-  it "has an error when signature is just expired" do
+  it "has an error when signature just expired" do
+    PrivatePub.config[:signature_expiration] = 1
     sub = PrivatePub.subscription(:timestamp => 123, :channel => "hello")
     @message["subscription"] = sub[:channel]
     @message["ext"]["private_pub_signature"] = sub[:signature]
