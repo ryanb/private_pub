@@ -12,7 +12,7 @@ describe PrivatePub::FayeExtension do
     @message["ext"]["private_pub_signature"] = "bad"
     @message["ext"]["private_pub_timestamp"] = "123"
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should == "Incorrect signature."
+    message["error"].should eq("Incorrect signature.")
   end
 
   it "has no error when the signature matches the subscription" do
@@ -31,7 +31,7 @@ describe PrivatePub::FayeExtension do
     @message["ext"]["private_pub_signature"] = sub[:signature]
     @message["ext"]["private_pub_timestamp"] = sub[:timestamp]
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should == "Signature has expired."
+    message["error"].should eq("Signature has expired.")
   end
 
   it "has an error when trying to publish to a custom channel with a bad token" do
@@ -39,7 +39,7 @@ describe PrivatePub::FayeExtension do
     @message["channel"] = "/custom/channel"
     @message["ext"]["private_pub_token"] = "bad"
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should == "Incorrect token."
+    message["error"].should eq("Incorrect token.")
   end
 
   it "raises an exception when attempting to call a custom channel without a secret_token set" do

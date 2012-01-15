@@ -16,14 +16,14 @@ describe PrivatePub do
   it "defaults subscription timestamp to current time in milliseconds" do
     time = Time.now
     Time.stub!(:now).and_return(time)
-    PrivatePub.subscription[:timestamp].should == (time.to_f * 1000).round
+    PrivatePub.subscription[:timestamp].should eq((time.to_f * 1000).round)
   end
 
   it "loads a simple configuration file via load_config" do
     PrivatePub.load_config("spec/fixtures/private_pub.yml", "production")
-    PrivatePub.config[:server].should == "http://example.com/faye"
-    PrivatePub.config[:secret_token].should == "PRODUCTION_SECRET_TOKEN"
-    PrivatePub.config[:signature_expiration].should == 600
+    PrivatePub.config[:server].should eq("http://example.com/faye")
+    PrivatePub.config[:secret_token].should eq("PRODUCTION_SECRET_TOKEN")
+    PrivatePub.config[:signature_expiration].should eq(600)
   end
 
   it "raises an exception if an invalid environment is passed to load_config" do
@@ -35,15 +35,15 @@ describe PrivatePub do
   it "includes channel, server, and custom time in subscription" do
     PrivatePub.config[:server] = "server"
     subscription = PrivatePub.subscription(:timestamp => 123, :channel => "hello")
-    subscription[:timestamp].should == 123
-    subscription[:channel].should == "hello"
-    subscription[:server].should == "server"
+    subscription[:timestamp].should eq(123)
+    subscription[:channel].should eq("hello")
+    subscription[:server].should eq("server")
   end
 
   it "does a sha1 digest of channel, timestamp, and secret token" do
     PrivatePub.config[:secret_token] = "token"
     subscription = PrivatePub.subscription(:timestamp => 123, :channel => "channel")
-    subscription[:signature].should == Digest::SHA1.hexdigest("tokenchannel123")
+    subscription[:signature].should eq(Digest::SHA1.hexdigest("tokenchannel123"))
   end
 
   it "formats a message hash given a channel and a string for eval" do
@@ -74,7 +74,7 @@ describe PrivatePub do
     PrivatePub.config[:server] = "http://localhost"
     message = stub(:to_json => "message_json")
     Net::HTTP.should_receive(:post_form).with(URI.parse("http://localhost"), :message => "message_json").and_return(:result)
-    PrivatePub.publish_message(message).should == :result
+    PrivatePub.publish_message(message).should eq(:result)
   end
 
   it "raises an exception if no server is specified when calling publish_message" do
@@ -86,7 +86,7 @@ describe PrivatePub do
   it "publish_to passes message to publish_message call" do
     PrivatePub.should_receive(:message).with("chan", "foo").and_return("message")
     PrivatePub.should_receive(:publish_message).with("message").and_return(:result)
-    PrivatePub.publish_to("chan", "foo").should == :result
+    PrivatePub.publish_to("chan", "foo").should eq(:result)
   end
 
   it "has a Faye rack app instance" do
