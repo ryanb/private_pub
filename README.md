@@ -61,7 +61,7 @@ This JavaScript will be immediately evaluated on all clients who have subscribed
 
 ## Alternative Usage
 
-If you prefer to work through JSON instead of JavaScript templates to handle AJAX responses, you can pass an argument to `publish_to` instead of a block and it will be converted `to_json` behind the scenes. This can also be done anywhere (such as the controller).
+If you prefer to work through JSON instead of `.js.erb` templates, you can pass a hash to `publish_to` instead of a block and it will be converted `to_json` behind the scenes. This can be done anywhere (such as the controller).
 
 ```ruby
 PrivatePub.publish_to "/messages/new", :chat_message => "Hello, world!"
@@ -75,14 +75,21 @@ PrivatePub.subscribe("/messages/new", function(data, channel) {
 });
 ```
 
-The Ruby `subscribe_to` call is still necessary with this approach to grant the user access to the channel. The JavaScript is just a callback for any custom behavior.
+The Ruby `subscribe_to` helper call is still necessary with this approach to grant the user access to the channel. The JavaScript is just a callback for any custom behavior.
 
 
-## Security
+## Configuration
 
-Security is handled automatically for you. Only the Rails app is able to publish messages. Users are only able to receive messages on the channels you subscribe them to so every channel is private.
+The configuration is set separately for each environment in the generated `config/private_pub.yml` file. Here are the options.
 
-Here's how it works. The `subscribe_to` helper will output a script element containing data information about the channel.
+* `server`: The URL to use for the Faye server.
+* `secret_token`: A secret hash to secure the server. Can be any string.
+* `signature_expiration`: The length of time in seconds before a subscription signature expires. If this is not set there is no expiration. Note: if Faye is on a separate server from the Rails app, the system clocks must be in sync for the expiration to work properly.
+
+
+## How It Works
+
+The `subscribe_to` helper will output the following script which subscribes the user to a specific channel and server.
 
 ```html
 <script type="text/javascript">
@@ -95,21 +102,11 @@ Here's how it works. The `subscribe_to` helper will output a script element cont
 </script>
 ```
 
-The signature is a combination of the channel, timestamp, and secret token set in the Rails app. This is checked by the Faye extension when subscribing to a channel to ensure the signature is correct. The signature automatically expires after 1 hour but this can be configured in the generated YAML config file.
+The signature and timestamp checked on the Faye server to ensure users are only able to access channels you subscribe them too. The signature will automatically expire after the time specified in the configuration.
 
-```yaml
-signature_expiration: 600 # 10 minutes, expressed in seconds
-```
-
-Or use a blank value for no expiration.
-
-```yaml
-signature_expiration:
-```
-
-Note: if Faye is on a separate server from the Rails app it's important that the system clocks be in sync so the expiration works properly.
+The `publish_to` method will send a post request to the Faye server (using `Net::HTTP`) instructing it to send the given data back to the browser.
 
 
 ## Development & Feedback
 
-Questions or comments? Please use the [issue tracker](https://github.com/ryanb/private_pub/issues). If you would like to contribue to this project, clone this repository and run `bundle` and `rake` to run the tests.
+Questions or comments? Please use the [issue tracker](https://github.com/ryanb/private_pub/issues). Tests can be run with `bundle` and `rake` commands.
