@@ -6,5 +6,5 @@ test:
   secret_token: "secret"
 production:
   server: "http://example.com/faye"
-  secret_token: "<%= ActiveSupport::SecureRandom.hex(32) %>"
+  secret_token: "<%= defined?(SecureRandom) ? SecureRandom.hex(32) : ActiveSupport::SecureRandom.hex(32) %>"
   signature_expiration: 3600 # one hour
