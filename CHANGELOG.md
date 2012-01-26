@@ -1,3 +1,8 @@
+## 1.0.0 (January 25, 2012)
+
+* Rails 3.2 compatibility with SecureRandom fix (thanks windigo) - issue #26
+
+
 ## 1.0.0 (January 15, 2012)
 
 * setting config defaults to nil so everything must be set in `private_pub.yml`
