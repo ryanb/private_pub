@@ -72,9 +72,38 @@ describe PrivatePub do
 
   it "publish message as json to server using Net::HTTP" do
     PrivatePub.config[:server] = "http://localhost"
-    message = stub(:to_json => "message_json")
-    Net::HTTP.should_receive(:post_form).with(URI.parse("http://localhost"), :message => "message_json").and_return(:result)
+    message = 'foo'
+    form = mock(:post).as_null_object
+    http = mock(:http).as_null_object
+
+    Net::HTTP::Post.should_receive(:new).with('/').and_return(form)
+    form.should_receive(:set_form_data).with(message: 'foo'.to_json)
+
+    Net::HTTP.should_receive(:new).with('localhost', 80).and_return(http)
+    http.should_receive(:start).and_yield(http)
+    http.should_receive(:request).with(form).and_return(:result)
+
     PrivatePub.publish_message(message).should eq(:result)
+  end
+
+  it "it should use HTTPS if the server URL says so" do
+    PrivatePub.config[:server] = "https://localhost"
+    http = mock(:http).as_null_object
+
+    Net::HTTP.should_receive(:new).and_return(http)
+    http.should_receive(:use_ssl=).with(true)
+
+    PrivatePub.publish_message('foo')
+  end
+
+  it "it should not use HTTPS if the server URL says not to" do
+    PrivatePub.config[:server] = "http://localhost"
+    http = mock(:http).as_null_object
+
+    Net::HTTP.should_receive(:new).and_return(http)
+    http.should_receive(:use_ssl=).with(false)
+
+    PrivatePub.publish_message('foo')
   end
 
   it "raises an exception if no server is specified when calling publish_message" do
