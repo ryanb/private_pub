@@ -39,6 +39,29 @@ rackup private_pub.ru -s thin -E production
 
 It's not necessary to include faye.js since that will be handled automatically for you.
 
+## Serving Faye over HTTPS (with Thin)
+
+To server Faye over HTTPS you could create a thin configuration file `config/private_pub_thin.yml` similar to the following:
+
+```yaml
+---
+port: 4443
+ssl: true
+ssl_key_file: /path/to/server.pem
+ssl_cert_file: /path/to/certificate_chain.pem
+environment: production
+rackup: private_pub.ru
+```
+
+The `certificate_chain.pem` file should contain your signed certificate, followed by intermediate certificates (if any) and the root certificate of the CA that signed the key.
+
+Next reconfigure the URL in `config/private_pub.yml` to look like `https://your.hostname.com:4443/faye`
+
+Finally start up Thin from the project root.
+
+```
+thin -C config/private_pub_thin.yml start
+```
 
 ## Usage
 
