@@ -43,6 +43,7 @@ describe PrivatePub do
     it "should pass redis config options to faye" do
       Faye::RackAdapter.should_receive(:new) do |options|
         options[:engine].should eq PrivatePub.options[:engine]
+        options[:mount].should eq '/faye'
       end
       PrivatePub.faye_app({})
     end

@@ -14,7 +14,7 @@ module PrivatePub
     # Resets the configuration and options to the default (empty hash)
     def reset_config
       @config = {}
-      @options = {:engine => {:type => 'redis'}}
+      @options = {:engine => {:type => 'redis'}, :mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}
     end
 
     # Loads the  configuration from a given YAML file and environment (such as production)
@@ -75,7 +75,7 @@ module PrivatePub
     # Returns the Faye Rack application.
     # Any options given are passed to the Faye::RackAdapter.
     def faye_app(options = {})
-      @options.merge({:mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}).merge(options)
+      @options.merge(options)
       Faye::RackAdapter.new(@options)
     end
   end
