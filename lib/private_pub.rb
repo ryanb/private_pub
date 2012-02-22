@@ -9,10 +9,12 @@ module PrivatePub
 
   class << self
     attr_reader :config
+    attr_reader :options
 
-    # Resets the configuration to the default (empty hash)
+    # Resets the configuration and options to the default (empty hash)
     def reset_config
       @config = {}
+      @options = {:engine => {:type => 'redis'}}
     end
 
     # Loads the  configuration from a given YAML file and environment (such as production)
@@ -20,6 +22,11 @@ module PrivatePub
       yaml = YAML.load_file(filename)[environment.to_s]
       raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if yaml.nil?
       yaml.each { |k, v| config[k.to_sym] = v }
+    end
+
+    def load_redis_config(filename, environment)
+      yaml = YAML.load_file(filename)[environment.to_s]
+      yaml.each {|k, v| options[:engine][k.to_sym] = v}
     end
 
     # Publish the given data to a specific channel. This ends up sending
@@ -68,8 +75,8 @@ module PrivatePub
     # Returns the Faye Rack application.
     # Any options given are passed to the Faye::RackAdapter.
     def faye_app(options = {})
-      options = {:mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}.merge(options)
-      Faye::RackAdapter.new(options)
+      @options.merge({:mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}).merge(options)
+      Faye::RackAdapter.new(@options)
     end
   end
 

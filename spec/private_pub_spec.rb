@@ -26,6 +26,28 @@ describe PrivatePub do
     PrivatePub.config[:signature_expiration].should eq(600)
   end
 
+  context "when redis config exists" do
+    before do
+      PrivatePub.load_redis_config("spec/fixtures/private_pub_redis.yml", "test")
+    end
+
+    it "should passes redis config to faye engine options" do
+      PrivatePub.options[:engine][:type].should eq 'redis'
+      PrivatePub.options[:engine][:host].should eq 'redis_host'
+      PrivatePub.options[:engine][:port].should eq 'redis_port'
+      PrivatePub.options[:engine][:password].should eq 'redis_password'
+      PrivatePub.options[:engine][:database].should eq 'redis_database'
+      PrivatePub.options[:engine][:namespace].should eq '/namespace'
+    end
+
+    it "should pass redis config options to faye" do
+      Faye::RackAdapter.should_receive(:new) do |options|
+        options[:engine].should eq PrivatePub.options[:engine]
+      end
+      PrivatePub.faye_app({})
+    end
+  end
+
   it "raises an exception if an invalid environment is passed to load_config" do
     lambda {
       PrivatePub.load_config("spec/fixtures/private_pub.yml", :test)
