@@ -6,11 +6,7 @@ require "private_pub"
 
 PrivatePub.load_config(File.expand_path("../config/private_pub.yml", __FILE__), ENV["RAILS_ENV"] || "development")
 
-path = Rails.root.join("config/private_pub_redis.yml")
-
-puts "loading redis config: " + path.inspect
-puts File.expand_path("../config/private_pub.yml", __FILE__).inspect
-
-options = path.exist? ? PrivatePub.load_redis_config(File.expand_path("../config/private_pub.yml", __FILE__), Rails.env) : {}
+path = File.expand_path("../config/private_pub_redis.yml", __FILE__)
+options = File.exist?(path) ? PrivatePub.load_redis_config(path, ENV['RAILS_ENV']) : {}
 
 run PrivatePub.faye_app(options)
