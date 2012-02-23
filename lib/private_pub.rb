@@ -9,12 +9,12 @@ module PrivatePub
 
   class << self
     attr_reader :config
-    attr_reader :options
+    attr_reader :default_options
 
     # Resets the configuration and options to the default (empty hash)
     def reset_config
       @config = {}
-      @options = {:engine => {:type => 'redis'}, :mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}
+      @default_options = {:mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}
     end
 
     # Loads the  configuration from a given YAML file and environment (such as production)
@@ -26,7 +26,10 @@ module PrivatePub
 
     def load_redis_config(filename, environment)
       yaml = YAML.load_file(filename)[environment.to_s]
+      options = {:engine => {:type => 'redis'}}
       yaml.each {|k, v| options[:engine][k.to_sym] = v}
+
+      options
     end
 
     # Publish the given data to a specific channel. This ends up sending
@@ -75,8 +78,7 @@ module PrivatePub
     # Returns the Faye Rack application.
     # Any options given are passed to the Faye::RackAdapter.
     def faye_app(options = {})
-      @options.merge(options)
-      Faye::RackAdapter.new(@options)
+      Faye::RackAdapter.new(@default_options.merge!(options))
     end
   end
 

@@ -28,24 +28,34 @@ describe PrivatePub do
 
   context "when redis config exists" do
     before do
-      PrivatePub.load_redis_config("spec/fixtures/private_pub_redis.yml", "test")
+      @options = PrivatePub.load_redis_config("spec/fixtures/private_pub_redis.yml", "test")
     end
 
-    it "should passes redis config to faye engine options" do
-      PrivatePub.options[:engine][:type].should eq 'redis'
-      PrivatePub.options[:engine][:host].should eq 'redis_host'
-      PrivatePub.options[:engine][:port].should eq 'redis_port'
-      PrivatePub.options[:engine][:password].should eq 'redis_password'
-      PrivatePub.options[:engine][:database].should eq 'redis_database'
-      PrivatePub.options[:engine][:namespace].should eq '/namespace'
+    it "passes redis config to faye engine options" do
+      @options[:engine][:type].should eq 'redis'
+      @options[:engine][:host].should eq 'redis_host'
+      @options[:engine][:port].should eq 'redis_port'
+      @options[:engine][:password].should eq 'redis_password'
+      @options[:engine][:database].should eq 'redis_database'
+      @options[:engine][:namespace].should eq '/namespace'
     end
 
-    it "should pass redis config options to faye" do
+    it "should pass redis config and default options to faye" do
       Faye::RackAdapter.should_receive(:new) do |options|
-        options[:engine].should eq PrivatePub.options[:engine]
+        options[:engine].should eq @options[:engine]
         options[:mount].should eq '/faye'
       end
-      PrivatePub.faye_app({})
+      PrivatePub.faye_app(@options)
+    end
+  end
+
+  context "when redis config does not exist" do
+    it "should not have :engine inside of options hash" do
+      PrivatePub.default_options.should_not include :engine
+    end
+
+    it "should have mount point" do
+      PrivatePub.default_options[:mount].should eq '/faye'
     end
   end
 
