@@ -11,24 +11,25 @@ module PrivatePub
     attr_reader :config
     attr_reader :default_options
 
-    # Resets the configuration and options to the default (empty hash)
+    # Resets the configuration and options to the default
+    # configuration defaults to empty hash
     def reset_config
       @config = {}
-      @default_options = {:mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}
+      @default_options = {:mount => "/faye", :timeout => 60, :extensions => [FayeExtension.new]}
     end
 
-    # Loads the  configuration from a given YAML file and environment (such as production)
+    # Loads the configuration from a given YAML file and environment (such as production)
     def load_config(filename, environment)
       yaml = YAML.load_file(filename)[environment.to_s]
       raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if yaml.nil?
       yaml.each { |k, v| config[k.to_sym] = v }
     end
 
+    # Loads the options from a given YAML file and environment (such as production)
     def load_redis_config(filename, environment)
       yaml = YAML.load_file(filename)[environment.to_s]
       options = {:engine => {:type => 'redis'}}
       yaml.each {|k, v| options[:engine][k.to_sym] = v}
-
       options
     end
 
