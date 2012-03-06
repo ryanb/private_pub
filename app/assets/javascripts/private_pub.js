@@ -1,4 +1,4 @@
-function buildPrivatePub(doc) {
+function buildPrivatePub (doc) {
   var self = {
     connecting: false,
     fayeClient: null,
@@ -6,7 +6,7 @@ function buildPrivatePub(doc) {
     subscriptions: {},
     subscriptionCallbacks: {},
 
-    faye: function(callback) {
+    faye: function (callback) {
       if (self.fayeClient) {
         callback(self.fayeClient);
       } else {
@@ -22,16 +22,16 @@ function buildPrivatePub(doc) {
       }
     },
 
-    connectToFaye: function() {
+    connectToFaye: function () {
       self.fayeClient = new Faye.Client(self.subscriptions.server);
       self.fayeClient.addExtension(self.fayeExtension);
-      for (var i=0; i < self.fayeCallbacks.length; i++) {
+      for (var i = 0; i < self.fayeCallbacks.length; i++) {
         self.fayeCallbacks[i](self.fayeClient);
-      };
+      }
     },
 
     fayeExtension: {
-      outgoing: function(message, callback) {
+      outgoing: function (message, callback) {
         if (message.channel == "/meta/subscribe") {
           // Attach the signature and timestamp to subscription messages
           var subscription = self.subscriptions[message.subscription];
@@ -43,17 +43,25 @@ function buildPrivatePub(doc) {
       }
     },
 
-    sign: function(options) {
-      if (!self.subscriptions.server) {
-        self.subscriptions.server = options.server;
-      }
-      self.subscriptions[options.channel] = options;
-      self.faye(function(faye) {
-        faye.subscribe(options.channel, self.handleResponse);
-      });
+    sign: function (options) {
+      $.ajax({
+        url: options.server,
+        success: function () {
+          if (!self.subscriptions.server) {
+            self.subscriptions.server = options.server;
+          }
+          self.subscriptions[options.channel] = options;
+          self.faye(function (faye) {
+            faye.subscribe(options.channel, self.handleResponse);
+          });
+        },
+        error: function () {
+          console.log("Cannot connect to pubsub server")
+        }
+      })
     },
 
-    handleResponse: function(message) {
+    handleResponse: function (message) {
       if (message.eval) {
         eval(message.eval);
       }
@@ -62,7 +70,7 @@ function buildPrivatePub(doc) {
       }
     },
 
-    subscribe: function(channel, callback) {
+    subscribe: function (channel, callback) {
       self.subscriptionCallbacks[channel] = callback;
     }
   };
