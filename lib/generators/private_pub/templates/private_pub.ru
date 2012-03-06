@@ -5,8 +5,13 @@ require "faye"
 require "private_pub"
 
 PrivatePub.load_config(File.expand_path("../config/private_pub.yml", __FILE__), ENV["RAILS_ENV"] || "development")
+Faye::WebSocket.load_adapter(PrivatePub.config[:adapter])
 
 path = File.expand_path("../config/private_pub_redis.yml", __FILE__)
-options = File.exist?(path) ? PrivatePub.load_redis_config(path, ENV['RAILS_ENV'] || 'development') : {}
+options = {}
+if File.exist?(path)
+  require 'faye/redis'
+  PrivatePub.load_redis_config(path, ENV['RAILS_ENV'] || 'development')
+end
 
 run PrivatePub.faye_app(options)

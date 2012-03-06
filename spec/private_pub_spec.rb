@@ -24,6 +24,7 @@ describe PrivatePub do
     PrivatePub.config[:server].should eq("http://example.com/faye")
     PrivatePub.config[:secret_token].should eq("PRODUCTION_SECRET_TOKEN")
     PrivatePub.config[:signature_expiration].should eq(600)
+    PrivatePub.config[:adapter].should eq('thin')
   end
 
   context "when redis config exists" do
@@ -32,7 +33,7 @@ describe PrivatePub do
     end
 
     it "passes redis config to faye engine options" do
-      @options[:engine][:type].should eq 'redis'
+      @options[:engine][:type].should eq Faye::Redis
       @options[:engine][:host].should eq 'redis_host'
       @options[:engine][:port].should eq 'redis_port'
       @options[:engine][:password].should eq 'redis_password'
