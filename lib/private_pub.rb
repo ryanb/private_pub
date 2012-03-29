@@ -1,5 +1,7 @@
 require "digest/sha1"
 require "net/http"
+require "net/https"
+require 'uri'
 
 require "private_pub/faye_extension"
 require "private_pub/engine" if defined? Rails
