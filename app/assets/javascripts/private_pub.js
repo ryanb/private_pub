@@ -1,4 +1,4 @@
-function buildPrivatePub(doc) {
+var PrivatePub = (function (doc) {
   var self = {
     connecting: false,
     fayeClient: null,
@@ -67,6 +67,4 @@ function buildPrivatePub(doc) {
     }
   };
   return self;
-}
-
-var PrivatePub = buildPrivatePub(document);
+}(document));
