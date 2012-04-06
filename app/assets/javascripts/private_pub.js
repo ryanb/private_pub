@@ -13,11 +13,15 @@ var PrivatePub = (function (doc) {
         self.fayeCallbacks.push(callback);
         if (self.subscriptions.server && !self.connecting) {
           self.connecting = true;
-          var script = doc.createElement("script");
-          script.type = "text/javascript";
-          script.src = self.subscriptions.server + ".js";
-          script.onload = self.connectToFaye;
-          doc.documentElement.appendChild(script);
+          if (typeof Faye === 'undefined') {
+            var script = doc.createElement("script");
+            script.type = "text/javascript";
+            script.src = self.subscriptions.server + ".js";
+            script.onload = self.connectToFaye;
+            doc.documentElement.appendChild(script);
+          } else {
+            self.connectToFaye();
+          }
         }
       }
     },
