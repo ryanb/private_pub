@@ -1,0 +1,6 @@
+test:
+  host: redis_host
+  port: redis_port
+  password: redis_password
+  database: redis_database
+  namespace: '/namespace'
