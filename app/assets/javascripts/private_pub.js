@@ -51,10 +51,12 @@ var PrivatePub = (function (doc) {
       if (!self.subscriptions.server) {
         self.subscriptions.server = options.server;
       }
-      self.subscriptions[options.channel] = options;
-      self.faye(function(faye) {
-        faye.subscribe(options.channel, self.handleResponse);
-      });
+      if (!self.subscriptions[options.channel]) {
+        self.subscriptions[options.channel] = options;
+        self.faye(function(faye) {
+          faye.subscribe(options.channel, self.handleResponse);
+        });
+      }
     },
 
     handleResponse: function(message) {
