@@ -1,3 +1,8 @@
+## 1.0.3 (August 20, 2012)
+
+* fixed Faye startup error (thanks gitt) - issue #40
+
+
 ## 1.0.2 (August 20, 2012)
 
 * added HTTPS support (thanks vanne)
