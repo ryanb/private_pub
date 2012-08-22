@@ -51,7 +51,7 @@ function buildPrivatePub(doc) {
       self.subscriptions[options.channel] = options;
       self.faye(function(faye) {
         var sub = faye.subscribe(options.channel, self.handleResponse);
-        subscriptionObjects[options.channel] = sub;
+        self.subscriptionObjects[options.channel] = sub;
         if (options.subscription) {
           options.subscription(sub);
         }
@@ -74,7 +74,7 @@ function buildPrivatePub(doc) {
     unsubscribeAll: function() {
       for (var i in self.subscriptionObjects) {
         if ( self.subscriptionObjects.hasOwnProperty(i) ) {
-          self.subscriptionObjects[i].cancel();
+          self.unsubscribe(i);
         }
       }
     },
@@ -83,6 +83,7 @@ function buildPrivatePub(doc) {
       var sub = self.subscription(channel);
       if (sub) {
         sub.cancel();
+        delete self.subscriptionObjects[channel];
       }
     },
 

@@ -63,6 +63,63 @@ describe("PrivatePub", function() {
     expect(pub.subscriptions.somechannel).toEqual(options);
   });
 
+  it("takes a callback for subscription object when signing", function(){
+    var faye = {subscribe: function(){ return "subscription"; }};
+    spyOn(pub, 'faye').andCallFake(function(callback) {
+      callback(faye);
+    });
+    var options = { server: "server", channel: "somechannel" };
+    options.subscription = jasmine.createSpy();
+    pub.sign(options);
+    expect(options.subscription).toHaveBeenCalledWith("subscription");
+  });
+
+  it("returns the subscription object for a subscribed channel", function(){
+    var faye = {subscribe: function(){ return "subscription"; }};
+    spyOn(pub, 'faye').andCallFake(function(callback) {
+      callback(faye);
+    });
+    var options = { server: "server", channel: "somechannel" };
+    pub.sign(options);
+    expect(pub.subscription("somechannel")).toEqual("subscription")
+  });
+
+  it("unsubscribes a channel by name", function(){
+    var sub = { cancel: jasmine.createSpy() };
+    var faye = {subscribe: function(){ return sub; }};
+    spyOn(pub, 'faye').andCallFake(function(callback) {
+      callback(faye);
+    });
+    var options = { server: "server", channel: "somechannel" };
+    pub.sign(options);
+    expect(pub.subscription("somechannel")).toEqual(sub);
+    pub.unsubscribe("somechannel");
+    expect(sub.cancel).toHaveBeenCalled();
+    expect(pub.subscription("somechannel")).toBeFalsy();
+  });
+
+  it("unsubscribes all channels", function(){
+    var created = 0;
+    var sub = function() {
+      created ++;
+      var sub = { cancel: function(){ created --; } };
+      return sub;
+    };
+    var faye = { subscribe: function(){ return sub(); }};
+    spyOn(pub, 'faye').andCallFake(function(callback) {
+      callback(faye);
+    });
+    pub.sign({server: "server", channel: "firstchannel"});
+    pub.sign({server: "server", channel: "secondchannel"});
+    expect(created).toEqual(2);
+    expect(pub.subscription("firstchannel")).toBeTruthy();
+    expect(pub.subscription("secondchannel")).toBeTruthy();
+    pub.unsubscribeAll()
+    expect(created).toEqual(0);
+    expect(pub.subscription("firstchannel")).toBeFalsy();
+    expect(pub.subscription("secondchannel")).toBeFalsy();
+  });
+
   it("triggers faye callback function immediately when fayeClient is available", function() {
     var called = false;
     pub.fayeClient = "faye";
