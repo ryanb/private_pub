@@ -49,7 +49,10 @@ function buildPrivatePub(doc) {
       }
       self.subscriptions[options.channel] = options;
       self.faye(function(faye) {
-        faye.subscribe(options.channel, self.handleResponse);
+        var sub = faye.subscribe(options.channel, self.handleResponse);
+        if (options.subscription) {
+          options.subscription(sub);
+        }
       });
     },
 
