@@ -1,4 +1,14 @@
-## 1.0.0 (January 25, 2012)
+## 1.0.3 (August 20, 2012)
+
+* fixed Faye startup error (thanks gitt) - issue #40
+
+
+## 1.0.2 (August 20, 2012)
+
+* added HTTPS support (thanks vanne)
+
+
+## 1.0.1 (January 25, 2012)
 
 * Rails 3.2 compatibility with SecureRandom fix (thanks windigo) - issue #26
 
