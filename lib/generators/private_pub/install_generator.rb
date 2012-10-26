@@ -6,7 +6,7 @@ module PrivatePub
       end
 
       def copy_files
-        template "private_pub.yml", "config/private_pub.yml"
+        template "private_pub.rb", "config/initializers/private_pub.rb"
         if ::Rails.version < "3.1"
           copy_file "../../../../app/assets/javascripts/private_pub.js", "public/javascripts/private_pub.js"
         end
