@@ -16,6 +16,13 @@ module PrivatePub
       @config = {}
     end
 
+    # Loads the  configuration from a given YAML file and environment (such as production)     
+    def load_config(filename, environment)
+      yaml = YAML.load_file(filename)[environment.to_s]
+      raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if yaml.nil?
+      yaml.each { |k, v| config[k.to_sym] = v }
+    end
+
     # Publish the given data to a specific channel. This ends up sending
     # a Net::HTTP POST request to the Faye server.
     def publish_to(channel, data)
@@ -24,7 +31,7 @@ module PrivatePub
 
     # Sends the given message hash to the Faye server using Net::HTTP.
     def publish_message(message)
-      raise Error, "No server specified, ensure private_pub.rb initializer was loaded properly." unless config[:server]
+      raise Error, "No server specified, ensure your private_pub configuration was loaded properly." unless config[:server]
       url = URI.parse(config[:server])
 
       form = Net::HTTP::Post.new(url.path.empty? ? '/' : url.path)

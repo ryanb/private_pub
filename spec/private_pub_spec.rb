@@ -19,6 +19,18 @@ describe PrivatePub do
     PrivatePub.subscription[:timestamp].should eq((time.to_f * 1000).round)
   end
 
+  it "loads a simple configuration file via load_config" do      
+    PrivatePub.load_config("spec/fixtures/private_pub.yml", "production")
+    PrivatePub.config[:server].should eq("http://example.com/faye")
+    PrivatePub.config[:secret_token].should eq("PRODUCTION_SECRET_TOKEN")
+    PrivatePub.config[:signature_expiration].should eq(600)
+  end
+  
+  it "raises an exception if an invalid environment is passed to load_config" do
+    lambda {
+      PrivatePub.load_config("spec/fixtures/private_pub.yml", :test)
+    }.should raise_error ArgumentError
+  end
 
   it 'yields self in setup block' do
     PrivatePub.setup do |private_pub|
