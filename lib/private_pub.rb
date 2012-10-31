@@ -43,8 +43,9 @@ module PrivatePub
 
     # Sends the given message hash to the Faye server using Net::HTTP.
     def publish_message(message)
-      raise Error, "No server specified, ensure private_pub.yml was loaded properly." unless config[:server]
-      url = URI.parse(config[:server])
+      server = config[:server_server] || config[:server]
+      raise Error, "No server specified, ensure private_pub.yml was loaded properly." unless server
+      url = URI.parse(server)
 
       form = Net::HTTP::Post.new(url.path.empty? ? '/' : url.path)
       form.set_form_data(:message => message.to_json)
