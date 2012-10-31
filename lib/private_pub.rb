@@ -1,6 +1,7 @@
 require "digest/sha1"
 require "net/http"
 require "net/https"
+require "yajl/json_gem"
 
 require "private_pub/faye_extension"
 require "private_pub/engine" if defined? Rails
@@ -10,17 +11,28 @@ module PrivatePub
 
   class << self
     attr_reader :config
+    attr_reader :default_options
 
-    # Resets the configuration to the default (empty hash)
+    # Resets the configuration and options to the default
+    # configuration defaults to empty hash
     def reset_config
       @config = {}
+      @default_options = {:mount => "/faye", :timeout => 60, :extensions => [FayeExtension.new]}
     end
 
-    # Loads the  configuration from a given YAML file and environment (such as production)
+    # Loads the configuration from a given YAML file and environment (such as production)
     def load_config(filename, environment)
       yaml = YAML.load_file(filename)[environment.to_s]
       raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if yaml.nil?
       yaml.each { |k, v| config[k.to_sym] = v }
+    end
+
+    # Loads the options from a given YAML file and environment (such as production)
+    def load_redis_config(filename, environment)
+      yaml = YAML.load_file(filename)[environment.to_s]
+      options = {:engine => {:type => Faye::Redis}}
+      yaml.each {|k, v| options[:engine][k.to_sym] = v}
+      options
     end
 
     # Publish the given data to a specific channel. This ends up sending
@@ -31,8 +43,9 @@ module PrivatePub
 
     # Sends the given message hash to the Faye server using Net::HTTP.
     def publish_message(message)
-      raise Error, "No server specified, ensure private_pub.yml was loaded properly." unless config[:server]
-      url = URI.parse(config[:server])
+      server = config[:server_server] || config[:server]
+      raise Error, "No server specified, ensure private_pub.yml was loaded properly." unless server
+      url = URI.parse(server)
 
       form = Net::HTTP::Post.new(url.path.empty? ? '/' : url.path)
       form.set_form_data(:message => message.to_json)
@@ -69,8 +82,7 @@ module PrivatePub
     # Returns the Faye Rack application.
     # Any options given are passed to the Faye::RackAdapter.
     def faye_app(options = {})
-      options = {:mount => "/faye", :timeout => 45, :extensions => [FayeExtension.new]}.merge(options)
-      Faye::RackAdapter.new(options)
+      Faye::RackAdapter.new(@default_options.merge!(options))
     end
   end
 

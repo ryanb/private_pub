@@ -1,8 +1,10 @@
 development:
+  adapter: thin
   server: http://dev.local:9292/faye
   secret_token: DEVELOPMENT_SECRET_TOKEN
   signature_expiration: 600
 production:
+  adapter: thin
   server: http://example.com/faye
   secret_token: PRODUCTION_SECRET_TOKEN
   signature_expiration: 600
