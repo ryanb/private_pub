@@ -36,6 +36,7 @@ module PrivatePub
 
       form = Net::HTTP::Post.new(url.path.empty? ? '/' : url.path)
       form.set_form_data(:message => message.to_json)
+      form.basic_auth(config[:basic_auth][:user], config[:basic_auth][:password]) if config[:basic_auth]
 
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = url.scheme == "https"

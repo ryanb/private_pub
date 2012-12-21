@@ -8,3 +8,6 @@ production:
   server: "http://example.com/faye"
   secret_token: "<%= defined?(SecureRandom) ? SecureRandom.hex(32) : ActiveSupport::SecureRandom.hex(32) %>"
   signature_expiration: 3600 # one hour
+  basic_auth: # remove if not necessary
+    user: 'user'
+    password: 'pass'
