@@ -108,6 +108,15 @@ The configuration is set separately for each environment in the generated `confi
 * `server`: The URL to use for the Faye server such as `http://localhost:9292/faye`.
 * `secret_token`: A secret hash to secure the server. Can be any string.
 * `signature_expiration`: The length of time in seconds before a subscription signature expires. If this is not set there is no expiration. Note: if Faye is on a separate server from the Rails app, the system clocks must be in sync for the expiration to work properly.
+* `basic_auth`: If your faye server is protected with basic access authentication credentials, you have to set the right credentials in your `config/private_pub.yml` file. Remove the basic_auth yaml-block if not necessary...
+
+```yaml
+production:
+  # ...
+  basic_auth: 
+    user: 'user'
+    password: 'pass'
+```
 
 
 ## How It Works
