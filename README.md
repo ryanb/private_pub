@@ -11,6 +11,12 @@ Add the gem to your Gemfile and run the `bundle` command to install it.
 
 ```ruby
 gem "private_pub"
+
+# If your faye-server is protected with basic access authentication you can use my fork
+# go to the configuration part to get details 
+gem 'private_pub', :git => 'git://github.com/svenhedin/private_pub.git'
+
+
 ```
 
 Run the generator to create the initial files.
