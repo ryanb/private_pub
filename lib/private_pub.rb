@@ -36,6 +36,10 @@ module PrivatePub
 
       form = Net::HTTP::Post.new(url.path.empty? ? '/' : url.path)
       form.set_form_data(:message => message.to_json)
+      raise Error, "No user or password for basic_auth is 
+        specified. If you dont want basic access authentication 
+        remove basic_auth from private_pub.yml." if config[:basic_auth] and (config[:basic_auth]['user'].nil? or config[:basic_auth]['password'].nil?)
+      form.basic_auth(config[:basic_auth]['user'], config[:basic_auth]['password']) if config[:basic_auth]
 
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = url.scheme == "https"
