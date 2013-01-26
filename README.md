@@ -25,11 +25,14 @@ Next, start up Faye using the rackup file that was generated.
 rackup private_pub.ru -s thin -E production
 ```
 
-**In Rails 3.1** add the JavaScript file to your application.js file manifest.
+**In Rails 3.1 and above** add the JavaScript files to your application.js file manifest.
 
 ```javascript
+//= require faye
 //= require private_pub
 ```
+
+`faye.js` will be automatically loaded if you haven't added it to your `application.js` manifest.
 
 **In Rails 3.0** add the generated private_pub.js file to your layout.
 

@@ -1,3 +1,7 @@
+## HEAD
+
+* Only load faye.js if the Faye object is not already present (thanks vollnhals)
+
 ## 1.0.3 (August 20, 2012)
 
 * fixed Faye startup error (thanks gitt) - issue #40
