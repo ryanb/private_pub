@@ -1,3 +1,7 @@
+## HEAD
+
+* Only subscribe once to a channel (thanks vollnhals)
+
 ## 1.0.3 (August 20, 2012)
 
 * fixed Faye startup error (thanks gitt) - issue #40
