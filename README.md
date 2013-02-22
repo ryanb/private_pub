@@ -7,10 +7,11 @@ Watch [RailsCasts Episode 316](http://railscasts.com/episodes/316-private-pub) f
 
 ## Setup
 
-Add the gem to your Gemfile and run the `bundle` command to install it.
+Add the gem to your Gemfile and run the `bundle` command to install it. You'll probably want to add "thin" to your Gemfile as well to serve Faye.
 
 ```ruby
 gem "private_pub"
+gem "thin"
 ```
 
 Run the generator to create the initial files.
