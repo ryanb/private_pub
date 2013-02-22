@@ -4,6 +4,7 @@ function buildPrivatePub(doc) {
     fayeClient: null,
     fayeCallbacks: [],
     subscriptions: {},
+    subscriptionObjects: {},
     subscriptionCallbacks: {},
 
     faye: function(callback) {
@@ -49,7 +50,11 @@ function buildPrivatePub(doc) {
       }
       self.subscriptions[options.channel] = options;
       self.faye(function(faye) {
-        faye.subscribe(options.channel, self.handleResponse);
+        var sub = faye.subscribe(options.channel, self.handleResponse);
+        self.subscriptionObjects[options.channel] = sub;
+        if (options.subscription) {
+          options.subscription(sub);
+        }
       });
     },
 
@@ -59,6 +64,26 @@ function buildPrivatePub(doc) {
       }
       if (callback = self.subscriptionCallbacks[message.channel]) {
         callback(message.data, message.channel);
+      }
+    },
+
+    subscription: function(channel) {
+      return self.subscriptionObjects[channel];
+    },
+
+    unsubscribeAll: function() {
+      for (var i in self.subscriptionObjects) {
+        if ( self.subscriptionObjects.hasOwnProperty(i) ) {
+          self.unsubscribe(i);
+        }
+      }
+    },
+
+    unsubscribe: function(channel) {
+      var sub = self.subscription(channel);
+      if (sub) {
+        sub.cancel();
+        delete self.subscriptionObjects[channel];
       }
     },
 
