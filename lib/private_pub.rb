@@ -4,6 +4,7 @@ require "net/https"
 
 require "private_pub/faye_extension"
 require "private_pub/engine" if defined? Rails
+require "yaml"
 
 module PrivatePub
   class Error < StandardError; end
@@ -21,6 +22,7 @@ module PrivatePub
       yaml = YAML.load(ERB.new(File.read(filename)).result)[environment.to_s]
       raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if yaml.nil?
       yaml.each { |k, v| config[k.to_sym] = v }
+      config[:signature_expiration] = config[:signature_expiration].to_i if config[:signature_expiration] && !config[:signature_expiration].is_a?(Integer)
     end
 
     # Publish the given data to a specific channel. This ends up sending
