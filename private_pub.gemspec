@@ -1,11 +1,11 @@
 Gem::Specification.new do |s|
   s.name        = "private_pub"
-  s.version     = "1.0.3"
+  s.version     = "1.0.4"
   s.author      = "Ryan Bates"
   s.email       = "ryan@railscasts.com"
   s.homepage    = "http://github.com/ryanb/private_pub"
   s.summary     = "Private pub/sub messaging in Rails."
-  s.description = "Private pub/sub messaging in Rails through Faye."
+  s.description = "Private pub/sub messaging in Rails through Faye with command env params and puma."
 
   s.files        = Dir["{app,lib,spec}/**/*", "[A-Z]*", "init.rb"] - ["Gemfile.lock"]
   s.require_path = "lib"
