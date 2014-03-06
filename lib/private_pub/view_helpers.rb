@@ -12,8 +12,9 @@ module PrivatePub
     # Subscribe the client to the given channel. This generates
     # some JavaScript calling PrivatePub.sign with the subscription
     # options.
-    def subscribe_to(channel)
-      subscription = PrivatePub.subscription(:channel => channel)
+    def subscribe_to(channel, options = {})
+      options = {publish: false}.merge! options
+      subscription = PrivatePub.subscription(channel: channel, publish: options[:publish])
       content_tag "script", :type => "text/javascript" do
         raw("PrivatePub.sign(#{subscription.to_json});")
       end

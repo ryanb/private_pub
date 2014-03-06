@@ -31,15 +31,26 @@ function buildPrivatePub(doc) {
       };
     },
 
+    // TODO: Make method fail-safe
+    // TODO: Remove debug messages
     fayeExtension: {
       outgoing: function(message, callback) {
-        if (message.channel == "/meta/subscribe") {
-          // Attach the signature and timestamp to subscription messages
+        if (!message.channel.match(/^\/meta\/(?!subscribe).*/)) {
           var subscription = self.subscriptions[message.subscription];
           if (!message.ext) message.ext = {};
-          message.ext.private_pub_signature = subscription.signature;
+          // Attach the timestamp to messages  
           message.ext.private_pub_timestamp = subscription.timestamp;
+            
+          if (message.channel == "/meta/subscribe") {
+            // Attach the signature to subscription messages  
+            message.ext.private_pub_signature = subscription.sub_signature;
+          } else {
+            // Attach the signature to subscription messages  
+            message.ext.private_pub_signature = subscription.pub_signature;
+          }
         }
+        console.debug(message.ext);
+
         callback(message);
       }
     },
