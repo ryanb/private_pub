@@ -25,22 +25,24 @@ module PrivatePub
       message["channel"] !~ %r{^/meta/}
     end
 
+    def channel_of(message)
+      message[is_subscription?(message) ? "subscription" : "channel"]
+    end
+
     # Ensure a signature is correct and that it has not expired.
     def check_signature(message)
-      subscription = PrivatePub.subscription(:publish => true, :channel => message["subscription"], :timestamp => message["ext"]["private_pub_timestamp"])
+      subscription = PrivatePub.subscription(:publish => true, :channel => channel_of(message), :timestamp => message["ext"]["private_pub_timestamp"])
       expected_signature = is_subscription?(message) ? subscription[:sub_signature] : subscription[:pub_signature]
 
       if message["ext"]["private_pub_signature"] != expected_signature
         message["error"] = "Incorrect signature."
-        puts "lol1"
+        puts "soll: #{expected_signature}, ist: #{message["ext"]["private_pub_signature"]}"
       elsif PrivatePub.signature_expired? message["ext"]["private_pub_timestamp"].to_i
         message["error"] = "Signature has expired."
-        puts "lol2"
       end
     end
 
-    # Ensures the secret token is correct before publishing.
-    # TODO: change format to allow js clients to publish
+    # Ensures either the correct secret token or publish signature is set
     def authenticate_publish(message)
       if PrivatePub.config[:secret_token].nil?
         raise Error, "No secret_token config set, ensure private_pub.yml is loaded properly."
@@ -49,7 +51,6 @@ module PrivatePub
       if message["ext"]["private_pub_token"]
         if message["ext"]["private_pub_token"] != PrivatePub.config[:secret_token]
           message["error"] = "Incorrect token."
-          puts "lol3"
         else
           message["ext"]["private_pub_token"] = nil
         end
