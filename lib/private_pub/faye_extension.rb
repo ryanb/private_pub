@@ -5,7 +5,6 @@ module PrivatePub
     # Callback to handle incoming Faye messages. This authenticates both
     # subscribe and publish calls.
     def incoming(message, callback)
-      puts "message to #{message["channel"]}: #{message["data"]}" # TODO: Remove!
       if is_subscription? message
         check_signature(message)
       elsif is_not_meta? message
@@ -36,7 +35,6 @@ module PrivatePub
 
       if message["ext"]["private_pub_signature"] != expected_signature
         message["error"] = "Incorrect signature."
-        puts "soll: #{expected_signature}, ist: #{message["ext"]["private_pub_signature"]}"
       elsif PrivatePub.signature_expired? message["ext"]["private_pub_timestamp"].to_i
         message["error"] = "Signature has expired."
       end
