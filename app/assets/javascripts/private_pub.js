@@ -84,6 +84,7 @@ function buildPrivatePub(doc) {
       if (sub) {
         sub.cancel();
         delete self.subscriptionObjects[channel];
+        delete self.subscriptionCallbacks[channel];
       }
     },
 
