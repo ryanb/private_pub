@@ -28,7 +28,7 @@ function buildPrivatePub(doc) {
       self.fayeClient.addExtension(self.fayeExtension);
       for (var i=0; i < self.fayeCallbacks.length; i++) {
         self.fayeCallbacks[i](self.fayeClient);
-      };
+      }
     },
 
     fayeExtension: {
@@ -59,11 +59,15 @@ function buildPrivatePub(doc) {
     },
 
     handleResponse: function(message) {
+      var callbacks;
       if (message.eval) {
         eval(message.eval);
       }
-      if (callback = self.subscriptionCallbacks[message.channel]) {
-        callback(message.data, message.channel);
+
+      if (callbacks = self.subscriptionCallbacks[message.channel]) {
+        callbacks.forEach(function(callback) {
+          callback(message.data, message.channel);
+        });
       }
     },
 
@@ -88,7 +92,8 @@ function buildPrivatePub(doc) {
     },
 
     subscribe: function(channel, callback) {
-      self.subscriptionCallbacks[channel] = callback;
+      self.subscriptionCallbacks[channel] = self.subscriptionCallbacks[channel] || [];
+      self.subscriptionCallbacks[channel].push(callback);
     }
   };
   return self;
