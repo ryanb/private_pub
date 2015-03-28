@@ -12,7 +12,7 @@ describe PrivatePub::FayeExtension do
     @message["ext"]["private_pub_signature"] = "bad"
     @message["ext"]["private_pub_timestamp"] = "123"
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should eq("Incorrect signature.")
+    expect(message["error"]).to eq("Incorrect signature.")
   end
 
   it "has no error when the signature matches the subscription" do
@@ -21,7 +21,7 @@ describe PrivatePub::FayeExtension do
     @message["ext"]["private_pub_signature"] = sub[:signature]
     @message["ext"]["private_pub_timestamp"] = sub[:timestamp]
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should be_nil
+    expect(message["error"]).to be_nil
   end
 
   it "has an error when signature just expired" do
@@ -31,7 +31,7 @@ describe PrivatePub::FayeExtension do
     @message["ext"]["private_pub_signature"] = sub[:signature]
     @message["ext"]["private_pub_timestamp"] = sub[:timestamp]
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should eq("Signature has expired.")
+    expect(message["error"]).to eq("Signature has expired.")
   end
 
   it "has an error when trying to publish to a custom channel with a bad token" do
@@ -39,21 +39,21 @@ describe PrivatePub::FayeExtension do
     @message["channel"] = "/custom/channel"
     @message["ext"]["private_pub_token"] = "bad"
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should eq("Incorrect token.")
+    expect(message["error"]).to eq("Incorrect token.")
   end
 
   it "raises an exception when attempting to call a custom channel without a secret_token set" do
     @message["channel"] = "/custom/channel"
     @message["ext"]["private_pub_token"] = "bad"
-    lambda {
+    expect {
       message = @faye.incoming(@message, lambda { |m| m })
-    }.should raise_error("No secret_token config set, ensure private_pub.yml is loaded properly.")
+    }.to raise_error("No secret_token config set, ensure private_pub.yml is loaded properly.")
   end
 
   it "has no error on other meta calls" do
     @message["channel"] = "/meta/connect"
     message = @faye.incoming(@message, lambda { |m| m })
-    message["error"].should be_nil
+    expect(message["error"]).to be_nil
   end
 
   it "should not let message carry the private pub token after server's validation" do
@@ -61,7 +61,7 @@ describe PrivatePub::FayeExtension do
     @message["channel"] = "/custom/channel"
     @message["ext"]["private_pub_token"] = PrivatePub.config[:secret_token]
     message = @faye.incoming(@message, lambda { |m| m })
-    message['ext']["private_pub_token"].should be_nil
+    expect(message['ext']["private_pub_token"]).to be_nil
   end
 
 end
