@@ -18,5 +18,11 @@ module PrivatePub
         raw("PrivatePub.sign(#{subscription.to_json});")
       end
     end
+
+    def tiny_subscribe_to(channel)
+      subscription = PrivatePub.subscription(:channel => channel)
+      raw("PrivatePub.sign(#{subscription.to_json});")
+    end
+
   end
 end
