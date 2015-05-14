@@ -19,6 +19,9 @@ module PrivatePub
       end
     end
 
+    # Subscribe the client to the given channel W/o generate
+    # <script></script> tag. This generates some JavaScript calling
+    # PrivatePub.sign with the subscription options.
     def tiny_subscribe_to(channel)
       subscription = PrivatePub.subscription(:channel => channel)
       raw("PrivatePub.sign(#{subscription.to_json});")
