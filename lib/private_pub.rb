@@ -56,9 +56,14 @@ module PrivatePub
     # Returns a subscription hash to pass to the PrivatePub.sign call in JavaScript.
     # Any options passed are merged to the hash.
     def subscription(options = {})
-      sub = {:server => config[:server], :timestamp => (Time.now.to_f * 1000).round}.merge(options)
-      sub[:signature] = Digest::SHA1.hexdigest([config[:secret_token], sub[:channel], sub[:timestamp]].join)
+      sub = {:publish => false, :server => config[:server], :timestamp => (Time.now.to_f * 1000).round}.merge(options)
+      sub[:sub_signature] = generate_signature(sub, false)
+      sub[:pub_signature] = generate_signature(sub, true) if sub[:publish]
       sub
+    end
+
+    def generate_signature(options, publish)
+      Digest::SHA1.hexdigest([publish ? "pub" : "sub", config[:secret_token], options[:channel], options[:timestamp]].join)
     end
 
     # Determine if the signature has expired given a timestamp.

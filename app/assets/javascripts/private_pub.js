@@ -33,13 +33,22 @@ function buildPrivatePub(doc) {
 
     fayeExtension: {
       outgoing: function(message, callback) {
-        if (message.channel == "/meta/subscribe") {
-          // Attach the signature and timestamp to subscription messages
-          var subscription = self.subscriptions[message.subscription];
+        if (!message.channel.match(/^\/meta\/(?!subscribe).*/)) {
+          var channel = message.channel == '/meta/subscribe' ? message.subscription : message.channel;
+          var subscription = self.subscriptions[channel];
           if (!message.ext) message.ext = {};
-          message.ext.private_pub_signature = subscription.signature;
+          // Attach the timestamp to messages
           message.ext.private_pub_timestamp = subscription.timestamp;
+            
+          if (message.channel == "/meta/subscribe") {
+            // Attach the signature to subscription messages  
+            message.ext.private_pub_signature = subscription.sub_signature;
+          } else {
+            // Attach the signature to subscription messages  
+            message.ext.private_pub_signature = subscription.pub_signature;
+          }
         }
+
         callback(message);
       }
     },
@@ -89,6 +98,12 @@ function buildPrivatePub(doc) {
 
     subscribe: function(channel, callback) {
       self.subscriptionCallbacks[channel] = callback;
+    },
+
+    publish: function(channel, message) {
+      self.faye(function(faye) {
+        faye.publish(channel, {channel: channel, data: message}); 
+      });
     }
   };
   return self;
