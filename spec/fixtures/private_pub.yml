@@ -6,3 +6,6 @@ production:
   server: http://example.com/faye
   secret_token: PRODUCTION_SECRET_TOKEN
   signature_expiration: 600
+staging:
+  server: <%= "http://" + "example.com" %>:<%= 9000 + 292 %>/faye
+  secret_token: "<%= %w{TEST SECRET TOKEN}.join('_') %>"

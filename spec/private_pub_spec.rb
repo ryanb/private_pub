@@ -26,6 +26,12 @@ describe PrivatePub do
     PrivatePub.config[:signature_expiration].should eq(600)
   end
 
+  it "loads a simple configuration file via load_config and processing ERB template" do
+    PrivatePub.load_config("spec/fixtures/private_pub.yml", "staging")
+    PrivatePub.config[:server].should eq("http://example.com:9292/faye")
+    PrivatePub.config[:secret_token].should eq("TEST_SECRET_TOKEN")
+  end
+
   it "raises an exception if an invalid environment is passed to load_config" do
     lambda {
       PrivatePub.load_config("spec/fixtures/private_pub.yml", :test)

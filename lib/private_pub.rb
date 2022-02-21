@@ -1,6 +1,7 @@
 require "digest/sha1"
 require "net/http"
 require "net/https"
+require 'erb'
 
 require "private_pub/faye_extension"
 require "private_pub/engine" if defined? Rails
@@ -18,7 +19,7 @@ module PrivatePub
 
     # Loads the  configuration from a given YAML file and environment (such as production)
     def load_config(filename, environment)
-      yaml = YAML.load_file(filename)[environment.to_s]
+      yaml = YAML.load(ERB.new(IO.read(filename)).result)[environment.to_s]
       raise ArgumentError, "The #{environment} environment does not exist in #{filename}" if yaml.nil?
       yaml.each { |k, v| config[k.to_sym] = v }
     end
