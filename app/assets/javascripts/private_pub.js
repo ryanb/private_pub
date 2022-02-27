@@ -1,4 +1,4 @@
-function buildPrivatePub(doc) {
+var PrivatePub = (function (doc) {
   var self = {
     connecting: false,
     fayeClient: null,
@@ -14,11 +14,15 @@ function buildPrivatePub(doc) {
         self.fayeCallbacks.push(callback);
         if (self.subscriptions.server && !self.connecting) {
           self.connecting = true;
-          var script = doc.createElement("script");
-          script.type = "text/javascript";
-          script.src = self.subscriptions.server + ".js";
-          script.onload = self.connectToFaye;
-          doc.documentElement.appendChild(script);
+          if (typeof Faye === 'undefined') {
+            var script = doc.createElement("script");
+            script.type = "text/javascript";
+            script.src = self.subscriptions.server + ".js";
+            script.onload = self.connectToFaye;
+            doc.documentElement.appendChild(script);
+          } else {
+            self.connectToFaye();
+          }
         }
       }
     },
@@ -92,6 +96,4 @@ function buildPrivatePub(doc) {
     }
   };
   return self;
-}
-
-var PrivatePub = buildPrivatePub(document);
+}(document));
