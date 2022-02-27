@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = s.name
   s.required_rubygems_version = ">= 1.3.4"
+  s.license = 'MIT'
 end
